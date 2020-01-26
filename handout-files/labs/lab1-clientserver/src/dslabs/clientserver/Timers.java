@@ -1,5 +1,8 @@
 package dslabs.clientserver;
 
+import dslabs.framework.Command;
+import dslabs.framework.Message;
+import dslabs.framework.Result;
 import dslabs.framework.Timer;
 import lombok.Data;
 
