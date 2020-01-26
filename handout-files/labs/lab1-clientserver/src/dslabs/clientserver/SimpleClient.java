@@ -58,7 +58,7 @@ class SimpleClient extends Node implements Client {
 
     @Override
     public synchronized boolean hasResult() {
-        return current_result != null
+        return current_result != null;
     }
 
     @Override
@@ -82,9 +82,11 @@ class SimpleClient extends Node implements Client {
         Timer Handlers
        -----------------------------------------------------------------------*/
     private synchronized void onClientTimer(ClientTimer t) {
-        if (current_command != null && Objects.equal(current_result, t.()) && pong == null) {
-            this.request_number++;
-            send(new Request(ping, this.request_number), serverAddress);
-            set(t, 100);
+        if (current_command != null && Objects.equal(current_result, t.()) && pong == null)
+            {
+                this.request_number++;
+                send(new Request(ping, this.request_number), serverAddress);
+                set(t, 100);
+            }
     }
 }
