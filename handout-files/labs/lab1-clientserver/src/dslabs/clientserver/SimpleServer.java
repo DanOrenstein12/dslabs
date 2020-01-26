@@ -1,6 +1,6 @@
 package dslabs.clientserver;
 
-import dslabs.kvstore.KVStore;
+import dslabs.kvstore.*;
 import dslabs.framework.Address;
 import dslabs.framework.Application;
 import dslabs.framework.Node;
