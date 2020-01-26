@@ -1,6 +1,7 @@
 package dslabs.clientserver;
 
 import dslabs.framework.Message;
+import dslabs.framework;
 import lombok.Data;
 
 @Data
