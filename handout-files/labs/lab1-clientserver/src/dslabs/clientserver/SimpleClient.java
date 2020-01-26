@@ -47,10 +47,10 @@ class SimpleClient extends Node implements Client {
        -----------------------------------------------------------------------*/
     @Override
     public synchronized void sendCommand(Command command) {
-        this.request_number ++;
-        Request outgoing = new Request(command, this.request_number);
-        this.current_request = command;
-        this.current_reply = null;
+        request_number ++;
+        Request outgoing = new Request(command, request_number);
+        current_request = command;
+        current_reply = null;
 
         this.send(outgoing, serverAddress);
         this.set(new ClientTimer(command, request_number));
