@@ -11,7 +11,7 @@ import lombok.ToString;
 /**
  * Simple client that sends requests to a single server and returns responses.
  *
- * See the documentation of {@link #Client#} and {@link #Node#} for important
+ * See the documentation of {@link } and {@link } for important
  * implementation notes.
  */
 @ToString(callSuper = true)
@@ -76,17 +76,17 @@ class SimpleClient extends Node implements Client {
         if (Objects.equal(current_command.value(), m.result().value()) && Objects.equal(current_command.key(), m.result().key())) {
             pong = m.pong();
             notify();
+        }
     }
 
     /* -------------------------------------------------------------------------
         Timer Handlers
        -----------------------------------------------------------------------*/
     private synchronized void onClientTimer(ClientTimer t) {
-        if (current_command != null && Objects.equal(current_result, t.()) && pong == null)
-            {
-                this.request_number++;
-                send(new Request(ping, this.request_number), serverAddress);
-                set(t, 100);
-            }
+        if (current_command != null && Objects.equal(current_result, t.()) && pong == null) {
+            this.request_number++;
+            send(new Request(ping, this.request_number), serverAddress);
+            set(t, 100);
+        }
     }
 }
