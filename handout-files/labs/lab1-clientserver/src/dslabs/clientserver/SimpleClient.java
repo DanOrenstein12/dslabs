@@ -75,7 +75,7 @@ class SimpleClient extends Node implements Client {
        -----------------------------------------------------------------------*/
     private synchronized void handleReply(Reply m, Address sender) {
         if (Objects.equal(current_command.value(), m.result().value()) && Objects.equal(current_command.key(), m.result().key())) {
-            pong = m.pong();
+            current_result = m.result();
             notify();
         }
     }
