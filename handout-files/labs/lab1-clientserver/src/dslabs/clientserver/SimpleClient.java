@@ -11,7 +11,7 @@ import lombok.ToString;
 /**
  * Simple client that sends requests to a single server and returns responses.
  *
- * See the documentation of {@link Client} and {@link Node} for important
+ * See the documentation of {@link #Client#} and {@link #Node#} for important
  * implementation notes.
  */
 @ToString(callSuper = true)
@@ -19,12 +19,12 @@ import lombok.ToString;
 class SimpleClient extends Node implements Client {
     private final Address serverAddress;
 
+    private int request_number = 0;
+    private Command current_command;
+    private KVStoreResult current_result;
 
-    @Data
-    class Request implements Message {
-        private final Command command;
-        private final int sequenceNum;
-    }
+
+
 
 
 
@@ -46,32 +46,45 @@ class SimpleClient extends Node implements Client {
        -----------------------------------------------------------------------*/
     @Override
     public synchronized void sendCommand(Command command) {
-        new Request(command, )
+        this.request_number ++;
+        Request outgoing = new Request(command, this.request_number);
+        this.current_request = command;
+        this.current_reply = null;
+
+        this.send(outgoing, serverAddress);
+        this.set(new ClientTimer(command, request_number));
+
     }
 
     @Override
     public synchronized boolean hasResult() {
-        // Your code here...
-        return false;
+        return current_result != null
     }
 
     @Override
     public synchronized Result getResult() throws InterruptedException {
-        // Your code here...
-        return null;
+        while (current_result == null) {
+            wait();
+        }
+        return current_result;
     }
 
     /* -------------------------------------------------------------------------
         Message Handlers
        -----------------------------------------------------------------------*/
     private synchronized void handleReply(Reply m, Address sender) {
-        // Your code here...
+        if (Objects.equal(current_command.value(), m.result().value()) && Objects.equal(current_command.key(), m.result().key())) {
+            pong = m.pong();
+            notify();
     }
 
     /* -------------------------------------------------------------------------
         Timer Handlers
        -----------------------------------------------------------------------*/
     private synchronized void onClientTimer(ClientTimer t) {
-        // Your code here...
+        if (current_command != null && Objects.equal(current_result, t.()) && pong == null) {
+            this.request_number++;
+            send(new Request(ping, this.request_number), serverAddress);
+            set(t, 100);
     }
 }
