@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 
+
 /**
  * Simple client that sends requests to a single server and returns responses.
  *
@@ -55,7 +56,7 @@ class SimpleClient extends Node implements Client {
         this.current_result = null;
 
         this.send(outgoing, serverAddress);
-        this.set(new ClientTimer(command, request_number));
+        this.set(new ClientTimer(command, request_number),100);
 
     }
 
@@ -76,7 +77,7 @@ class SimpleClient extends Node implements Client {
         Message Handlers
        -----------------------------------------------------------------------*/
     private synchronized void handleReply(Reply m, Address sender) {
-        if (Objects.equal(current_command.value(), m.result().value()) && Objects.equal(current_command.key(), m.result().key())) {
+        if (Objects.equal(current_command.value(), m.result().value())) {
             current_result = m.result();
             notify();
         }

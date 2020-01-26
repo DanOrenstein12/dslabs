@@ -1,12 +1,13 @@
 package dslabs.clientserver;
 
-
+import dslabs.framework.Result;
 import dslabs.framework.Address;
 import dslabs.framework.Application;
 import dslabs.framework.Node;
 import dslabs.kvstore.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import java.util.Hashtable;
 
 /**
  * Simple server that receives requests and returns responses.
@@ -17,6 +18,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
     private final KVStore app = new KVStore();
+    Map<int, int> kv = new Hashtable();
 
 
 
@@ -26,7 +28,7 @@ class SimpleServer extends Node {
     public SimpleServer(Address address, Application app) {
         super(address);
 
-        // Handle multiple clients...
+
     }
 
     @Override
