@@ -18,7 +18,7 @@ import java.util.Hashtable;
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
     private final KVStore app = new KVStore();
-    Map<int, int> kv = new Hashtable();
+//    Map<int, int> kv = new Hashtable();
 
 
 
