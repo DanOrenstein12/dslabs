@@ -5,7 +5,7 @@ import dslabs.framework.Client;
 import dslabs.framework.Command;
 import dslabs.framework.Node;
 import dslabs.framework.Result;
-import dslabs_new.kvstore.*;
+import dslabs.kvstore;
 import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
