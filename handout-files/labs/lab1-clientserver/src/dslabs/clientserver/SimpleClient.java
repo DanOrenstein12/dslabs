@@ -22,7 +22,7 @@ class SimpleClient extends Node implements Client {
 
     private int request_number = 0;
     private Command current_command;
-    private KVStoreResult current_result;
+    private Result current_result;
 
 
 
