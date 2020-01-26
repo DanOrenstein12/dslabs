@@ -9,6 +9,7 @@ import dslabs.kvstore.*;
 import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import com.google.common.base.Objects;
 
 /**
  * Simple client that sends requests to a single server and returns responses.
