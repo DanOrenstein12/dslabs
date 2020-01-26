@@ -91,7 +91,9 @@ public class KVStore implements Application {
                 String current = kv.get(a.key);
                 kv.put(a.key,current + a.value);
             }
-            kv.put(a.key,a.value);
+            else {
+                kv.put(a.key,a.value);
+            }
             return new AppendResult(kv.get(a.key));
         }
 
