@@ -6,6 +6,7 @@ import dslabs.framework.Command;
 import dslabs.framework.Node;
 import dslabs.framework.Result;
 import dslabs.kvstore.*;
+import Java.Objects
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -21,8 +22,8 @@ class SimpleClient extends Node implements Client {
     private final Address serverAddress;
 
     private int request_number = 0;
-    private Command current_command;
-    private Result current_result;
+    private KVStoreCommand current_command;
+    private KVStoreResult current_result;
 
 
 
@@ -84,9 +85,9 @@ class SimpleClient extends Node implements Client {
         Timer Handlers
        -----------------------------------------------------------------------*/
     private synchronized void onClientTimer(ClientTimer t) {
-        if (current_command != null && Objects.equal(current_result, t.command()) && pong == null) {
+        if (current_command != null && Objects.equal(current_result, t.command()) && current_result == null) {
             this.request_number++;
-            send(new Request(ping, this.request_number), serverAddress);
+            send(new Request(current_command, this.request_number), serverAddress);
             set(t, 100);
         }
     }
