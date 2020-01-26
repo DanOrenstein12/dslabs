@@ -19,7 +19,14 @@ import lombok.ToString;
 class SimpleClient extends Node implements Client {
     private final Address serverAddress;
 
-    // Your code here...
+
+    @Data
+    class Request implements Message {
+        private final Command command;
+        private final int sequenceNum;
+    }
+
+
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
@@ -39,7 +46,7 @@ class SimpleClient extends Node implements Client {
        -----------------------------------------------------------------------*/
     @Override
     public synchronized void sendCommand(Command command) {
-        // Your code here...
+        new Request(command, )
     }
 
     @Override

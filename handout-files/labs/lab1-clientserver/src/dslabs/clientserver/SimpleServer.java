@@ -14,7 +14,9 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
-    // Your code here...
+    private final KVStore app = new KVStore();
+
+
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
@@ -34,6 +36,20 @@ class SimpleServer extends Node {
         Message Handlers
        -----------------------------------------------------------------------*/
     private void handleRequest(Request m, Address sender) {
-        // Your code here...
+        KVStoreResult res = app.execute(m.command());
+        send(new Reply(res, m.sequenceNum), sender);
+
+
+    }
+    @Data
+    class Request implements Message {
+        private final Command command;
+        private final int sequenceNum;
+    }
+
+    @Data
+    class Reply implements Message {
+        private final Result result;
+        private final int sequenceNum;
     }
 }
