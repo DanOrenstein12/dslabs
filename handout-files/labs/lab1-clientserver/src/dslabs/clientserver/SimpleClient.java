@@ -89,7 +89,6 @@ class SimpleClient extends Node implements Client {
        -----------------------------------------------------------------------*/
     private synchronized void onClientTimer(ClientTimer t) {
         if (current_command != null && Objects.equal(current_command, t.command()) && current_result == null) {
-            //this.request_number++;
             send(new Request(current_command, this.request_number), serverAddress);
             set(t, 100);
         }
