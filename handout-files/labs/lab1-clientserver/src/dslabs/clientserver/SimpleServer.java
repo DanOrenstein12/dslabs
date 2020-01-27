@@ -19,7 +19,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
     private final KVStore app = new KVStore();
-    Map<int, int> kv = new Hashtable();
+//    Map<int, int> kv = new Hashtable();
 
 
 
@@ -30,7 +30,7 @@ class SimpleServer extends Node {
        -----------------------------------------------------------------------*/
     public SimpleServer(Address address, Application app) {
         super(address);
-        Map<String, String> client_records = new Hashtable();
+//        Map<String, String> client_records = new Hashtable();
 
 
 
