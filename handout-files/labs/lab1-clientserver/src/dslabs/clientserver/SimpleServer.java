@@ -54,7 +54,7 @@ class SimpleServer extends Node {
             if (Objects.equals(id, previous_reply.sequenceNum)) {
                 send(previous_reply, sender);
             }
-            else
+            else {
                 Result res = app.execute(m.command());
                 this.atmostonce.replace(sender, res);
             }
