@@ -51,7 +51,7 @@ class SimpleServer extends Node {
         int id = m.sequenceNum;
         if (this.atmostonce.containsKey(sender)) {
             Reply previous_reply = this.atmostonce.get(sender);
-            if (id == previous_reply.sequenceNum) {
+            if (id <= previous_reply.sequenceNum) {
                 send(previous_reply, sender);
             }
             else {
