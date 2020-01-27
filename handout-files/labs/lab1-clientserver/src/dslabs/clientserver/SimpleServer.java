@@ -57,7 +57,7 @@ class SimpleServer extends Node {
             else {
                 Result res = app.execute(m.command());
                 Reply new_reply = new Reply(res, id);
-                this.atmostonce.replace(sender, res);
+                this.atmostonce.replace(sender, new_reply);
                 send(new_reply, sender);
             }
 
