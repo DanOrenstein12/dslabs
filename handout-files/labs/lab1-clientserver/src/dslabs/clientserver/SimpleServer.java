@@ -20,6 +20,7 @@ import com.google.common.base.Objects;
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
     private final KVStore app = new KVStore();
+    HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
 
 
 
@@ -40,7 +41,7 @@ class SimpleServer extends Node {
     @Override
     public void init() {
         // No initialization necessary
-        HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
+
     }
 
     /* -------------------------------------------------------------------------
@@ -48,17 +49,17 @@ class SimpleServer extends Node {
        -----------------------------------------------------------------------*/
     private void handleRequest(Request m, Address sender) {
         int id = m.sequenceNum;
-        if (atmostonce.containsKey(sender)) {
-            previous_reply = atmostonce.get(sender);
+        if (this.atmostonce.containsKey(sender)) {
+            Result previous_reply = this.atmostonce.get(sender);
             if (Objects.equals(id, previous_reply.sequenceNum)) {
                 send(previous_reply, sender);
-            } else {
+            } else
                 Result res = app.execute(m.command());
-                atmostonce.replace(sender, res);
+            this.atmostonce.replace(sender, res);
             }
 
         } else {
-            atmostonce.put(sender, m);
+        this.atmostonce.put(sender, m);
             Result res = app.execute(m.command());
 
 
