@@ -30,7 +30,7 @@ class SimpleServer extends Node {
        -----------------------------------------------------------------------*/
     public SimpleServer(Address address, Application app) {
         super(address);
-//        Map<String, String> client_records = new Hashtable();
+//        Map<int, int> client_records = new Hashtable();
 
 
 
@@ -45,9 +45,10 @@ class SimpleServer extends Node {
         Message Handlers
        -----------------------------------------------------------------------*/
     private void handleRequest(Request m, Address sender) {
+        int id = m.sequenceNum
         Result res = app.execute(m.command());
 
-        send(new Reply(res, 1), sender);
+        send(new Reply(res, id), sender);
 
 
     }
