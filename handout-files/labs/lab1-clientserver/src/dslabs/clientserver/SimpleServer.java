@@ -7,8 +7,9 @@ import dslabs.framework.Node;
 import dslabs.kvstore.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import java.util.Hashtable;
-import java.util.Map;
+
+import java.util.Hashmap;
+import com.google.common.base.Objects;
 
 /**
  * Simple server that receives requests and returns responses.
@@ -19,7 +20,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
     private final KVStore app = new KVStore();
-//    Map<int, int> kv = new Hashtable();
+    HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
 
 
 
