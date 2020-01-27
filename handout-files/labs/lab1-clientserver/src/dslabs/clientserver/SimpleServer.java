@@ -20,7 +20,7 @@ import com.google.common.base.Objects;
 @EqualsAndHashCode(callSuper = true)
 class SimpleServer extends Node {
     private final KVStore app = new KVStore();
-    HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
+
 
 
 
@@ -31,7 +31,7 @@ class SimpleServer extends Node {
        -----------------------------------------------------------------------*/
     public SimpleServer(Address address, Application app) {
         super(address);
-//        Map<int, int> client_records = new Hashtable();
+        HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
 
 
 
@@ -47,7 +47,14 @@ class SimpleServer extends Node {
        -----------------------------------------------------------------------*/
     private void handleRequest(Request m, Address sender) {
         int id = m.sequenceNum;
+/*
+        if (atmostonce.containsKey(sender)) {
+
+        }
+        atmostonce.put(sender, m);
+*/
         Result res = app.execute(m.command());
+
 
         send(new Reply(res, id), sender);
 
