@@ -53,13 +53,15 @@ class SimpleServer extends Node {
             Result previous_reply = this.atmostonce.get(sender);
             if (Objects.equals(id, previous_reply.sequenceNum)) {
                 send(previous_reply, sender);
-            } else
+            }
+            else
                 Result res = app.execute(m.command());
-            this.atmostonce.replace(sender, res);
+                this.atmostonce.replace(sender, res);
             }
 
-        } else {
-        this.atmostonce.put(sender, m);
+        }
+        else {
+            this.atmostonce.put(sender, m);
             Result res = app.execute(m.command());
 
 
