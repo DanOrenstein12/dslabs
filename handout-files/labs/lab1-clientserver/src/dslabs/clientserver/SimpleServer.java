@@ -31,7 +31,7 @@ class SimpleServer extends Node {
        -----------------------------------------------------------------------*/
     public SimpleServer(Address address, Application app) {
         super(address);
-        HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
+
 
 
 
@@ -40,6 +40,7 @@ class SimpleServer extends Node {
     @Override
     public void init() {
         // No initialization necessary
+        HashMap<Object, Object> atmostonce = new HashMap<Object, Object>();
     }
 
     /* -------------------------------------------------------------------------
