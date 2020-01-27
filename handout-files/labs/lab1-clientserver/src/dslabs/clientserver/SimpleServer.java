@@ -8,7 +8,7 @@ import dslabs.kvstore.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.Hashmap;
+import java.util.HashMap;
 import com.google.common.base.Objects;
 
 /**
