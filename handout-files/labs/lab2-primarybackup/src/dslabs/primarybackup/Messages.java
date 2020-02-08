@@ -1,6 +1,9 @@
 package dslabs.primarybackup;
 
 import dslabs.framework.Message;
+import dslabs.primarybackup.AMOApplication;
+import dslabs.primarybackup.AMOCommand;
+import dslabs.primarybackup.AMOResult;
 import lombok.Data;
 
 /* -------------------------------------------------------------------------
@@ -26,11 +29,23 @@ class ViewReply implements Message {
 @Data
 class Request implements Message {
     // Your code here...
+    private final AMOCommand amoCommand;
 }
 
 @Data
 class Reply implements Message {
     // Your code here...
+    private final AMOResult amoResult;
 }
 
+
+@Data
+class AppRequest implements Message {
+    //TODO
+}
+
+@Data
+class AppReply implements Message {
+    private final AMOApplication app;
+}
 // Your code here...
