@@ -97,7 +97,7 @@ class PBServer extends Node {
     private synchronized void handleReply(Reply m, Address sender) {
         if(m.amoResult() != null && Objects.equals(sender, this.view.backup())) {
             this.backupResult = m.amoResult();
-            this.notify();
+            notify();
         }
     }
 
