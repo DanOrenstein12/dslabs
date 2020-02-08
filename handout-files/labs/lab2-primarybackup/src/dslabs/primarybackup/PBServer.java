@@ -76,11 +76,11 @@ class PBServer extends Node {
                     // Use timer to send again if not receive the result from the backup
                     this.set(new ForwardRequestTimer(sender, m.amoCommand(), result), FORWARD_AGAIN);
                     // Maybe need to wait for backup server
-                    while (
+                    //while (
                             !Objects.equals(result, this.backupResult)) {
                         // Objects.equals(sender, this.view.backup()) &&
-                        this.wait();
-                    }
+                    //    this.wait();
+                    //}
                 }
                 this.send(new Reply(result), sender);
             }else if (isBackup) {
