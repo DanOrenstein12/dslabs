@@ -41,7 +41,7 @@ class Reply implements Message {
 
 @Data
 class AppRequest implements Message {
-    //TODO
+    // Your code here
 }
 
 @Data
