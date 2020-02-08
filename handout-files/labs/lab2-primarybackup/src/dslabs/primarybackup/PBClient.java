@@ -37,6 +37,7 @@ class PBClient extends Node implements Client {
     @Override
     public void init() {
         // Your code here...
+        this.result = null;
         view = new View(0, null, null);
         this.send(new GetView(), this.viewServer);
         this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
