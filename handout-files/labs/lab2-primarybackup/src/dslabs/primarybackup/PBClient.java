@@ -90,7 +90,7 @@ class PBClient extends Node implements Client {
     private void synchronized handleViewReply(ViewReply m, Address sender) {
         // Your code here...
         this.view = m.view();
-        notify;
+        notify();
 //        System.out.println("view reply: " + this.view);
     }
 
