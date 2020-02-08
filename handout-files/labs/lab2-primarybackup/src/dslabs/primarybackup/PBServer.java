@@ -79,7 +79,7 @@ class PBServer extends Node {
                    // while (Objects.equals(sender, this.view.backup()) &&
                      //       !Objects.equals(result, this.backupResult)) {
                       //  this.wait();
-                    }
+                    //}
                 }
                 this.send(new Reply(result), sender);
             }else if (isBackup) {
