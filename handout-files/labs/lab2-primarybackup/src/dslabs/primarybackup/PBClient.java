@@ -37,11 +37,9 @@ class PBClient extends Node implements Client {
     @Override
     public void init() {
         // Your code here...
+        view = new View(0, null, null);
         this.send(new GetView(), this.viewServer);
         this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
-        while (view == null) {
-            wait();
-        }
 
     }
 
@@ -87,10 +85,9 @@ class PBClient extends Node implements Client {
         }
     }
 
-    private synchronized void handleViewReply(ViewReply m, Address sender) throws InterruptedException {
+    private void handleViewReply(ViewReply m, Address sender) {
         // Your code here...
         this.view = m.view();
-        notify();
 //        System.out.println("view reply: " + this.view);
     }
 
@@ -109,8 +106,9 @@ class PBClient extends Node implements Client {
     }
 
     private void onViewServerTimer(ViewServerTimer t) {
-        this.send(new GetView(), this.viewServer);
-
+        if(this.result == null) {
+            this.send(new GetView(), this.viewServer);
+        }
         this.set(t, VIEW_SERVER_REGET_MILLIS);
     }
 }
