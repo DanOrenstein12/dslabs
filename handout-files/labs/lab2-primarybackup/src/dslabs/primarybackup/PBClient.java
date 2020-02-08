@@ -39,8 +39,8 @@ class PBClient extends Node implements Client {
         // Your code here...
         this.send(new GetView(), this.viewServer);
         this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
-        while (view == null) {
-            wait();
+   //     while (view == null) {
+ //           wait();
         }
 
     }
@@ -109,9 +109,8 @@ class PBClient extends Node implements Client {
     }
 
     private void onViewServerTimer(ViewServerTimer t) {
-        if(this.result == null) {
-            this.send(new GetView(), this.viewServer);
-        }
+        this.send(new GetView(), this.viewServer);
+
         this.set(t, VIEW_SERVER_REGET_MILLIS);
     }
 }
