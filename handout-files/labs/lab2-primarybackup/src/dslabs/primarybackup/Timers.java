@@ -39,7 +39,7 @@ final class BackupAppRequestTimer implements Timer {
 
 @Data
 final class ForwardRequestTimer implements Timer {
-    static final int FORWARD_AGAIN = 50;
+    static final int FORWARD_AGAIN = 25;
     final Address sender;
     final AMOCommand command;
     final AMOResult result;
