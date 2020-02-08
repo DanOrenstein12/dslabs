@@ -54,7 +54,7 @@ class PBClient extends Node implements Client {
         this.result = null;
 
         AMOCommand c = new AMOCommand(command, ++this.MaxjobID, this.clientID);
-//        System.out.println(this.view);
+        System.out.println(this.view);
         this.send(new Request(c), this.view.primary());
         this.set(new ClientTimer(c), CLIENT_RETRY_MILLIS);
     }
