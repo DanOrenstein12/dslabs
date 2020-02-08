@@ -87,7 +87,7 @@ class PBClient extends Node implements Client {
         }
     }
 
-    private synchronized void handleViewReply(ViewReply m, Address sender) {
+    private synchronized void handleViewReply(ViewReply m, Address sender) throws InterruptedException {
         // Your code here...
         this.view = m.view();
         notify();
