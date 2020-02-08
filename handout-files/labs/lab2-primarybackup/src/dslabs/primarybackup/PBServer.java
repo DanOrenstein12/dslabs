@@ -84,8 +84,9 @@ class PBServer extends Node {
                 this.send(new Reply(result), sender);
             } else if (isBackup) {
                 // Backup needs to tell primary its synchronized
-                result = this.app.execute(amoCommand);
+
                 if(Objects.equals(sender, this.view.primary())) {
+                    result = this.app.execute(amoCommand);
                     this.send(new Reply(result), sender);
                 }
             }
