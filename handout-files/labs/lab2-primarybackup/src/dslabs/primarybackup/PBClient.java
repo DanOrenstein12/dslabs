@@ -39,9 +39,9 @@ class PBClient extends Node implements Client {
         // Your code here...
         this.send(new GetView(), this.viewServer);
         this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
-   //     while (view == null) {
- //           wait();
-  //      }
+        while (view == null) {
+            wait();
+        }
 
     }
 
