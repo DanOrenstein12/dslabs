@@ -134,7 +134,7 @@ class PBServer extends Node {
             this.isBackup = false;
         }
         // Tell the handleRequest that the backup may change
-        this.notify();
+       // this.notify();
     }
 
     // Your code here...
