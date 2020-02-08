@@ -109,8 +109,9 @@ class PBClient extends Node implements Client {
     }
 
     private void onViewServerTimer(ViewServerTimer t) {
-        this.send(new GetView(), this.viewServer);
-
+        if(this.result == null) {
+            this.send(new GetView(), this.viewServer);
+        }
         this.set(t, VIEW_SERVER_REGET_MILLIS);
     }
 }
