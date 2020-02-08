@@ -78,7 +78,7 @@ class PBServer extends Node {
                     // Maybe need to wait for backup server
                     while (!Objects.equals(result, this.backupResult)) {
                         // Objects.equals(sender, this.view.backup()) &&
-                        this.wait();
+                        wait();
                     }
                 }
                 this.send(new Reply(result), sender);
