@@ -27,7 +27,7 @@ final class ClientTimer implements Timer {
 
 @Data
 final class ViewServerTimer implements Timer {
-    static final int VIEW_SERVER_REGET_MILLIS = 100;
+    static final int VIEW_SERVER_REGET_MILLIS = 50;
 }
 
 @Data
