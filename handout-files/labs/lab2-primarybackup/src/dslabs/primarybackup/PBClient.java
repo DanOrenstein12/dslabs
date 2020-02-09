@@ -49,14 +49,15 @@ class PBClient extends Node implements Client {
     @Override
     public void sendCommand(Command command) {
         // Your code here...
+        if (view == null) {
+            break
+        }
         this.command = command;
         this.result = null;
 
         AMOCommand c = new AMOCommand(command, ++this.MaxjobID, this.clientID);
 //        System.out.println(this.view);
-        while(view == null) {
 
-        }
         this.send(new Request(c), this.view.primary());
  //       this.set(new ClientTimer(c), CLIENT_RETRY_MILLIS);
     }
