@@ -55,7 +55,7 @@ class PBClient extends Node implements Client {
         AMOCommand c = new AMOCommand(command, ++this.MaxjobID, this.clientID);
 //        System.out.println(this.view);
         this.send(new Request(c), this.view.primary());
-        this.set(new ClientTimer(c), CLIENT_RETRY_MILLIS);
+ //       this.set(new ClientTimer(c), CLIENT_RETRY_MILLIS);
     }
 
     @Override
@@ -100,6 +100,7 @@ class PBClient extends Node implements Client {
         // Your code here...
         if (this.command != null && this.result == null && t.amoCommand().sequenceNum() == this.MaxjobID
                 && Objects.equal(this.command, t.amoCommand().command())) {
+            this.send(new GetView(), this.viewServer);
             this.send(new Request(t.amoCommand), this.view.primary());
             this.set(t, CLIENT_RETRY_MILLIS);
         }
