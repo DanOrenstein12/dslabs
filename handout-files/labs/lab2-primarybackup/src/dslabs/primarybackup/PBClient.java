@@ -39,7 +39,7 @@ class PBClient extends Node implements Client {
         // Your code here...
         view = new View(0, null, null);
         this.send(new GetView(), this.viewServer);
-        this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
+//        this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
 
     }
 
@@ -54,6 +54,9 @@ class PBClient extends Node implements Client {
 
         AMOCommand c = new AMOCommand(command, ++this.MaxjobID, this.clientID);
 //        System.out.println(this.view);
+        while(view == null) {
+
+        }
         this.send(new Request(c), this.view.primary());
  //       this.set(new ClientTimer(c), CLIENT_RETRY_MILLIS);
     }
