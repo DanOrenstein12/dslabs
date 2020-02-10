@@ -133,8 +133,8 @@ class PBServer extends Node {
 
 
     private void handleForwardRequest(ForwardRequest m, Address sender) {
-        this.recentReply = new BackupReply(this.app.execute(m.request().amoCommand()), sender);
-        this.send(recentReply,sender);
+        BackupReply work = new BackupReply(this.app.execute(m.request().amoCommand()), sender);
+        this.send(work,sender);
         this.recentReply= null;
 
     }
