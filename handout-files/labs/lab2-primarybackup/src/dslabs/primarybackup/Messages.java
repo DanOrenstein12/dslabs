@@ -44,7 +44,7 @@ class Reply implements Message {
 @Data
 class ForwardRequest implements Message {
     private final Request request;
-    //private final int ID;
+    private final int globRequestID;
     private final Address client;
 }
 
