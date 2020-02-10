@@ -105,8 +105,7 @@ class PBClient extends Node implements Client {
 
             if (isViewCurrent && this.view.primary() != null) {
                 this.send(t.request(), this.view.primary());
-            } else {
-                this.send(new GetView(), this.viewServer);
+
             }
             this.set(t, t.CLIENT_RETRY_MILLIS);
 
