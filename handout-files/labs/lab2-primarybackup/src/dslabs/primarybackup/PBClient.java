@@ -101,13 +101,14 @@ class PBClient extends Node implements Client {
         if (result.sequenceNum() < t.request().amoCommand().sequenceNum()) {
 
 
-            this.send(new GetView(), this.viewServer);
+
 
             if (this.view.primary() != null) {
                 this.send(t.request(), this.view.primary());
 
             }
             this.set(t, t.CLIENT_RETRY_MILLIS);
+            this.send(new GetView(), this.viewServer);
 
         }
 
