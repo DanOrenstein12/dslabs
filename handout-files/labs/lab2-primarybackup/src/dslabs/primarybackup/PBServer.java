@@ -128,8 +128,12 @@ class PBServer extends Node {
         }
     }
 
+
+
+
+
     private void handleForwardRequest(ForwardRequest m, Address sender) {
-        this.recentReply = new Reply(this.app.execute(m.request().amoCommand()),m.request().globRequestID());
+        this.recentReply = new BackupReply(this.app.execute(m.request().amoCommand()),m.request().globRequestID());
         this.send(recentReply,sender);
         this.recentReply= null;
 
@@ -182,11 +186,10 @@ class PBServer extends Node {
 
 
     private synchronized void handleBackupReply(BackupReply m, Address sender) {
-        if(m.reply() != null) {
-            this.send(m.reply(),m.client());
-            if (this.recentRequest.globRequestID() == m.reply().globRequestID()) {
-                recentReply = m.reply();
-            }
+
+            notify();
+
+
         }
     }
 
