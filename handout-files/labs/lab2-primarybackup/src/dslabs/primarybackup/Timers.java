@@ -34,8 +34,8 @@ final class BackupAppRequestTimer implements Timer {
     final AMOApplication app;
 }
 
-//@Data
-//final class ForwardRequestTimer implements Timer {
-//    static final int FORWARD_RETRY_MILLIS = 100;
-//    final ForwardRequest request;
-//}
+@Data
+final class ForwardRequestTimer implements Timer {
+    static final int FORWARD_RETRY_MILLIS = 100;
+    final ForwardRequest request;
+}
