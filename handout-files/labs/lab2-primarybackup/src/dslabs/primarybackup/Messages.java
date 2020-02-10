@@ -50,7 +50,7 @@ class ForwardRequest implements Message {
 
 @Data
 class BackupReply implements Message {
-    private final Reply reply;
+    private final AMOResult amoResult;
  //   private final Request request;
     //private final int ID;
     private final Address client;
