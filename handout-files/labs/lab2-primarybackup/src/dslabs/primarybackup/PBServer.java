@@ -153,23 +153,32 @@ class PBServer extends Node {
         }
     }
 
-    private void handleForwardRequest(ForwardRequest req, Address sender) {
-        //if getting a request from the primary server, execute it on AMOApp and send back result
-        //to ensure linearizability of appends on backend server, need to execute in specific order
-        //  this order is given by the global request id of incoming requests
-        //  only execute if it is the first message ever handled, the next message in the global sequence of messages created, or is a duplicate - amoapp ensures appends dont act more than once
-        if (this.recentRequest == null || (latestApp && this.recentRequest.globRequestID()+1 >= req.request().globRequestID())) {
-            if (req.request() != null && req.request().amoCommand() != null) {
-                AMOResult res = app.execute(req.request().amoCommand());
-                if (this.recentRequest == null ||
-                        this.recentRequest.globRequestID() + 1 ==
-                                req.request().globRequestID()) {
-                    this.recentRequest = req.request();
-                }
-                this.recentReply = new Reply(res, req.request().globRequestID());
-                this.send(new BackupReply(this.recentReply, req.request(), req.client()), sender);
-            }
-        }
+//    private void handleForwardRequest(ForwardRequest req, Address sender) {
+//        //if getting a request from the primary server, execute it on AMOApp and send back result
+//        //to ensure linearizability of appends on backend server, need to execute in specific order
+//        //  this order is given by the global request id of incoming requests
+//        //  only execute if it is the first message ever handled, the next message in the global sequence of messages created, or is a duplicate - amoapp ensures appends dont act more than once
+//        if (this.recentRequest == null || (latestApp && this.recentRequest.globRequestID()+1 >= req.request().globRequestID())) {
+//            if (req.request() != null && req.request().amoCommand() != null) {
+//                AMOResult res = app.execute(req.request().amoCommand());
+//                if (this.recentRequest == null ||
+//                        this.recentRequest.globRequestID() + 1 ==
+//                                req.request().globRequestID()) {
+//                    this.recentRequest = req.request();
+//                }
+//                this.recentReply = new Reply(res, req.request().globRequestID());
+//                this.send(new BackupReply(this.recentReply, req.request(), req.client()), sender);
+//            }
+//        }
+//    }
+
+    private void handleForwardRequest(ForwardRequest m, Address sender) {
+        this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
+        this.send(recentReply,sender);
+        this.recentReply= null;
+
+
+
     }
 
     private synchronized void handleBackupReply(BackupReply m, Address sender) {
