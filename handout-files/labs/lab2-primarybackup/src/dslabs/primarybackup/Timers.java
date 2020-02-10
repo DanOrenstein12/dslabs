@@ -14,39 +14,28 @@ final class PingCheckTimer implements Timer {
 
 @Data
 final class PingTimer implements Timer {
-    static final int PING_MILLIS = 25;
+    static final int PING_MILLIS = 33;
 }
 
 @Data
 final class ClientTimer implements Timer {
-    static final int CLIENT_RETRY_MILLIS = 100;
+    static final int CLIENT_RETRY_MILLIS = 50;
     final Request request;
 }
 
 @Data
 final class ViewServerTimer implements Timer {
-    static final int VIEW_SERVER_REGET_MILLIS = 200;
+    static final int VIEW_SERVER_REGET_MILLIS = 100;
 }
 
 @Data
 final class BackupAppRequestTimer implements Timer {
-    static final int APP_REQUEST_RETRY_MILLIS = 25;
+    static final int APP_REQUEST_RETRY_MILLIS = 100;
     final AMOApplication app;
 }
 
 @Data
 final class ForwardRequestTimer implements Timer {
-    static final int FORWARD_RETRY_MILLIS = 50;
+    static final int FORWARD_RETRY_MILLIS = 100;
     final ForwardRequest request;
-}
-
-@Data
-final class BackupReplyTimer implements Timer {
-    static final int BACKUP_REPLY_RETRY_MILLIS = 50;
-    final Reply reply;
-}
-
-@Data
-final class ClientInitTimer implements Timer {
-    static final int INIT_GET_VIEW_RETRY_MILLIS = 100;
 }

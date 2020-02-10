@@ -1,4 +1,4 @@
-package dslabs.atmostonce;
+package dslabs.primarybackup;
 
 import dslabs.framework.Command;
 import lombok.Data;
@@ -9,5 +9,6 @@ public final class AMOCommand implements Command {
     private final Command command;
     private final int sequenceNum;
     private final int clientID;
+
 
 }

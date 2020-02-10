@@ -1,0 +1,37 @@
+App copying:
+get info into backup
+send request until it gets a reply
+we have this
+
+Backup:
+
+
+
+Multiples cases:
+case 1 is when the primary is still alive but the backup dies
+
+primary will continue to send the copy message until it gets a response
+
+handleviewreply is going to have logic for making sure that the primary anhd backup are the same as before otherwise do the changing behavior
+
+Changing behavior: if the primary has died and there is a backup then we have the backup become the primary and assign a new backup via the viewserver. Nothing special happens in this case.
+primary will never die when there is no backup
+
+if backup dies then we need to copy the primary application
+Questions: what is the behavior of hte primary while this is happening? Need a response on piazza before building this
+Possiblilities: wait for the backup to finish processing the app then start handling new shit
+handle new shit then whent he backup is done the view will be updated and suddenly the primary will dump its load --> no new code for this case
+
+backup dies and there is no replacement, the primary doesnt forward anything and just replies to clients
+
+timers: pings
+primary resending requests to the backup
+shouldnt need multiple for different types of requests
+
+shitload of new messages
+copying
+pings
+FORWARD REQUESst
+
+forwardreply
+replying
