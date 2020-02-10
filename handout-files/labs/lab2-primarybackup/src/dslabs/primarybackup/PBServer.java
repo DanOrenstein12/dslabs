@@ -128,6 +128,13 @@ class PBServer extends Node {
         }
     }
 
+    private void handleForwardRequest(ForwardRequest m, Address sender) {
+        this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.request().globRequestID());
+        this.send(recentReply,sender);
+        this.recentReply= null;
+
+    }
+
 
     private synchronized void handleViewReply(ViewReply m, Address sender) {
         this.view = m.view();
@@ -172,14 +179,7 @@ class PBServer extends Node {
 //        }
 //    }
 
-    private void handleForwardRequest(ForwardRequest m, Address sender) {
-        this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
-        this.send(recentReply,sender);
-        this.recentReply= null;
 
-
-
-    }
 
     private synchronized void handleBackupReply(BackupReply m, Address sender) {
         if(m.reply() != null) {
