@@ -347,7 +347,7 @@ class PBServer extends Node {
     private void handleAppRequest(AppRequest m, Address sender) {
         if(this.view.backup() != null && this.app != null && Objects.equals(sender, this.view.backup())) {
             //AMOApplication temp = this.app.clone();
-            this.send(new AppReply(this.application, this.recentlyHandledForward), sender);
+            this.send(new AppReply(this.app, this.recentlyHandledForward), sender);
         }
     }
 
