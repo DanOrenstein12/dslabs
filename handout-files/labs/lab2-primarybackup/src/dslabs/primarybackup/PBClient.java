@@ -101,7 +101,7 @@ class PBClient extends Node implements Client {
 
 
 
-            if (this.view != null && this.view.primary() != null) {
+            if (this.view != null) {
                 this.send(t.request(), this.view.primary());
 
             }
@@ -115,3 +115,4 @@ class PBClient extends Node implements Client {
 
 }
 
+ //&& this.view.primary() != null
