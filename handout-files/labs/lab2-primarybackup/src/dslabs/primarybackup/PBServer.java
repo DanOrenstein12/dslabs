@@ -188,7 +188,7 @@ class PBServer extends Node {
 
     private synchronized void handleBackupReply(BackupReply m, Address sender) {
 
-        this.recentReply = m.AMOResult()
+        this.recentReply = m.AMOResult();
 
 
 
