@@ -57,7 +57,7 @@ class PBClient extends Node implements Client {
         this.MaxjobID += 1;
         this.command = new AMOCommand(command, this.MaxjobID, this.clientID);
         Request req = new Request(this.command,++globalRequestID);
-        if (this.view != null) {
+        if (this.view != null && this.view.primary() != null) {
             this.send(req,this.view.primary());
         }
         this.set(new ClientTimer(req), CLIENT_RETRY_MILLIS);
@@ -101,7 +101,7 @@ class PBClient extends Node implements Client {
 
 
 
-            if (this.view != null) {
+            if (this.view != null && this.view.primary() != null) {
                 this.send(t.request(), this.view.primary());
 
             }
