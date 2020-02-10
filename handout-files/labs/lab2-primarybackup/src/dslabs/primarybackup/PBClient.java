@@ -19,12 +19,16 @@ class PBClient extends Node implements Client {
     private final Address viewServer;
 
     // Your code here...
-    private Command command;
-    private Result result;
+    private AMOCommand command;
+    private AMOResult result;
     private final int clientID = ++ViewServer.globalID;
     private int MaxjobID;
 
     private View view;
+    private boolean isViewCurrent;
+    private int numRetries;
+
+    private static int globalRequestID = 0;
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
@@ -36,84 +40,85 @@ class PBClient extends Node implements Client {
 
     @Override
     public void init() {
-        // Your code here...
-//        view = new View(0, null, null);
-        this.send(new GetView(), this.viewServer);
+        view = null;
+        isViewCurrent = false;
 //        this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
-
+        this.send(new GetView(), this.viewServer);
+        numRetries = 0;
+        result = new AMOResult(null,this.MaxjobID,this.clientID);
     }
 
     /* -------------------------------------------------------------------------
         Client Methods
        -----------------------------------------------------------------------*/
+
+
     @Override
     public void sendCommand(Command command) {
-        // Your code here...
-        if (view == null) {
-            break
+        numRetries = 0;
+        this.MaxjobID += 1;
+        this.command = new AMOCommand(command, this.MaxjobID, this.clientID);
+        Request req = new Request(this.command,++globalRequestID);
+        if (isViewCurrent && this.view.primary() != null) {
+            this.send(req,this.view.primary());
         }
-        this.command = command;
-        this.result = null;
-
-        AMOCommand c = new AMOCommand(command, ++this.MaxjobID, this.clientID);
-//        System.out.println(this.view);
-
-        this.send(new Request(c), this.view.primary());
- //       this.set(new ClientTimer(c), CLIENT_RETRY_MILLIS);
+        this.set(new ClientTimer(req), CLIENT_RETRY_MILLIS);
     }
 
     @Override
     public synchronized boolean hasResult() {
-        // Your code here...
-        return this.result != null;
+        return this.result.sequenceNum() == this.command.sequenceNum();
     }
 
     @Override
     public synchronized Result getResult() throws InterruptedException {
-        // Your code here...
-        while(this.result == null) {
+        while(!hasResult()) {
             this.wait();
         }
-        return result;
-
+        return this.result.result();
     }
 
     /* -------------------------------------------------------------------------
         Message Handlers
        -----------------------------------------------------------------------*/
     private synchronized void handleReply(Reply m, Address sender) {
-        // Your code here...
-        if(m.amoResult() != null && m.amoResult().sequenceNum() == this.MaxjobID) {
-            this.result = m.amoResult().result();
+        if(m.amoResult() != null && m.amoResult().sequenceNum() >= this.MaxjobID) {
+            this.result = m.amoResult();
             this.notify();
         }
     }
 
-    private void handleViewReply(ViewReply m, Address sender) {
-        // Your code here...
+    private synchronized void handleViewReply(ViewReply m, Address sender) {
         this.view = m.view();
-//        System.out.println("view reply: " + this.view);
+        isViewCurrent = true;
+        numRetries = 0;
     }
-
-    // Your code here...
 
     /* -------------------------------------------------------------------------
         Timer Handlers
        -----------------------------------------------------------------------*/
-    private void onClientTimer(ClientTimer t) {
-        // Your code here...
-        if (this.command != null && this.result == null && t.amoCommand().sequenceNum() == this.MaxjobID
-                && Objects.equal(this.command, t.amoCommand().command())) {
-            this.send(new GetView(), this.viewServer);
-            this.send(new Request(t.amoCommand), this.view.primary());
-            this.set(t, CLIENT_RETRY_MILLIS);
+    private synchronized void onClientTimer(ClientTimer t) {
+        if (result.sequenceNum() < t.request().amoCommand().sequenceNum()) {
+            numRetries++;
+            if (numRetries > 5) {
+                isViewCurrent = false;
+                numRetries = 0;
+                this.send(new GetView(), this.viewServer);
+            }
+            if (isViewCurrent && this.view.primary() != null) {
+                this.send(t.request(), this.view.primary());
+            }
+            else {
+                this.send(new GetView(), this.viewServer);
+            }
+            this.set(t, t.CLIENT_RETRY_MILLIS);
         }
     }
 
-    private void onViewServerTimer(ViewServerTimer t) {
-        if(this.result == null) {
-            this.send(new GetView(), this.viewServer);
-        }
-        this.set(t, VIEW_SERVER_REGET_MILLIS);
-    }
+//    private void onViewServerTimer(ViewServerTimer t) {
+//        if(!isViewCurrent) {
+//            this.send(new GetView(), this.viewServer);
+//            this.set(t, VIEW_SERVER_REGET_MILLIS);
+//        }
+//    }
 }
