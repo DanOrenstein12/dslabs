@@ -129,7 +129,7 @@ class PBServer extends Node {
     }
 
     private void handleForwardRequest(ForwardRequest m, Address sender) {
-        this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.request().globRequestID());
+        this.recentReply = new Reply(this.app.execute(m.request().amoCommand()),m.request().globRequestID());
         this.send(recentReply,sender);
         this.recentReply= null;
 
