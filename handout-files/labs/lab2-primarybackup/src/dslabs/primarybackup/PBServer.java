@@ -223,7 +223,7 @@ class PBServer extends Node {
     private View view;
     private boolean isPrimary;
     private boolean isBackup;
-    private boolean latestApp;
+    public boolean latestApp;
 
     private java.util.HashMap<Integer,ForwardRequest> outstandingRequests;
 
@@ -286,6 +286,7 @@ class PBServer extends Node {
     private void handleViewReply(ViewReply m, Address sender) {
         // Your code here...
         //we have cases on whether is primary or is backup or is neither
+        View oldview = this.view;
         this.view = m.view();
         if(!isPrimary && !isBackup) {//is idle
             if(Objects.equals(m.view().primary(), this.address())) {//idle -> primary
@@ -306,6 +307,12 @@ class PBServer extends Node {
             this.isPrimary = false;
             this.isBackup = false;
             this.reset();
+        } else if(isPrimary && !Objects.equals(m.view().backup(), m.backup())) {// primary waits to acknowledge new view until backup finishes updating
+            this.view = oldview;
+            if (m.backup().latestApp) {
+                this.view = m.view();
+            }
+
         }
     }
 
