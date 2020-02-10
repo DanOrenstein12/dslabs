@@ -247,7 +247,7 @@ class PBServer extends Node {
     public void init() {
         view = new View(ViewServer.STARTUP_VIEWNUM,null,null);
         this.send(new Ping(ViewServer.STARTUP_VIEWNUM),viewServer);
-        ping = new PingTimer();
+        //ping = new PingTimer();
         this.set(ping,ping.PING_MILLIS);
         this.isPrimary = false;
         this.isBackup = false;
