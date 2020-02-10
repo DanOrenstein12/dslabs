@@ -123,7 +123,7 @@ class PBServer extends Node {
             }
             this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
             this.send(recentReply,sender);
-            recentReply == null;
+            recentReply = null;
         }
     }
 
