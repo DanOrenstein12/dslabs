@@ -307,7 +307,7 @@ class PBServer extends Node {
             this.isPrimary = false;
             this.isBackup = false;
             this.reset();
-        } else if(isPrimary && !Objects.equals(m.view().backup(), m.backup())) {// primary waits to acknowledge new view until backup finishes updating
+        } else if(isPrimary && !Objects.equals(m.view().backup(), m.view.backup())) {// primary waits to acknowledge new view until backup finishes updating
             this.view = oldview;
             if (m.backup().latestApp) {
                 this.view = m.view();
