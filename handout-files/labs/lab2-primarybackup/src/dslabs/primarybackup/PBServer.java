@@ -117,7 +117,7 @@ class PBServer extends Node {
             if (hasBackup()) {
                 ForwardRequest forward_request = new ForwardRequest(m, sender);
                 this.send(forward_request, this.view.backup());
-                this.set(new ForwardRequestTimer(m,100));
+                this.set(new ForwardRequestTimer(forward_request,100));
                 while (this.recentReply == null) {
                     wait();
                 }
