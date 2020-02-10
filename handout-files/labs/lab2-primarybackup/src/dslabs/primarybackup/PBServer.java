@@ -265,20 +265,20 @@ class PBServer extends Node {
         // primary just forwards request onto backup if it exists, or acts as single server if not
         if (latestApp) {
             if (isPrimary) {
-                if (hasBackup()) {
-                    if (outstandingRequests.containsKey(m.globRequestID())) {
-                        this.send(outstandingRequests.get(m.globRequestID()), this.view.backup());
-                    } else {
-                        ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
-                        this.send(f, this.view.backup());
-                        this.app.execute(m.amoCommand());
-                        this.outstandingRequests.put(m.globRequestID(), f);
-                        this.recentlyHandledForward = m.globRequestID();
-                    }
-                } else {
+//                if (hasBackup()) {
+//                    if (outstandingRequests.containsKey(m.globRequestID())) {
+//                        this.send(outstandingRequests.get(m.globRequestID()), this.view.backup());
+//                    } else {
+//                        ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
+//                        this.send(f, this.view.backup());
+//                        this.app.execute(m.amoCommand());
+//                        this.outstandingRequests.put(m.globRequestID(), f);
+//                        this.recentlyHandledForward = m.globRequestID();
+//                    }
+//                } else {
                     Reply toRep = new Reply(this.app.execute(m.amoCommand()), m.globRequestID());
                     this.send(toRep, sender);
-                }
+//                }
             }
         }
     }

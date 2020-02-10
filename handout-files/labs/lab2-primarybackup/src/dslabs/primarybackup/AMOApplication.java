@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+
 @EqualsAndHashCode
 @ToString
 @RequiredArgsConstructor
@@ -67,6 +68,9 @@ public final class AMOApplication<T extends Application>
 
     public void setHashMap(HashMap<Integer,AMOResult> map) {
         this.clients = (HashMap<Integer, AMOResult>) map.clone();
+
+        
+
     }
 
     @Override
