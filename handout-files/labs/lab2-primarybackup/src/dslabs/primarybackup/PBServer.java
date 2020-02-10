@@ -118,8 +118,7 @@ class PBServer extends Node {
                 ForwardRequest forward_request = new ForwardRequest(m, sender);
                 this.send(forward_request, this.view.backup());
                 this.set(new ForwardRequestTimer(forward_request), 100);
-                while (this.recentReply == null) {
-                    wait();
+
                 }
             }
             this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
@@ -190,7 +189,7 @@ class PBServer extends Node {
 
     private synchronized void handleBackupReply(BackupReply m, Address sender) {
 
-        notify();
+        this.recentReply = m.AMOResult()
 
 
 
@@ -201,8 +200,8 @@ class PBServer extends Node {
     private void handleAppReply(AppReply appReply, Address sender) {
         if(!latestApp && appReply != null && Objects.equals(sender, this.view.primary())) {
             this.app = appReply.app();
-            //this.recentReply = appReply.recentReply();
-            //this.recentRequest = appReply.recentRequest();
+            this.recentReply = appReply.recentReply();
+            this.recentRequest = appReply.recentRequest();
             latestApp = true;
         }
     }
