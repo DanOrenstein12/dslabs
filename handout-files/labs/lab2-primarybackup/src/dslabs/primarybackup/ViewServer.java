@@ -24,6 +24,7 @@ class ViewServer extends Node {
 
     static final int STARTER = 0;
     public static int globalID = STARTER;
+
     /* -------------------------------------------------------------------------
         Construction and Initialization
        -----------------------------------------------------------------------*/
@@ -38,7 +39,6 @@ class ViewServer extends Node {
         this.view = new View(STARTUP_VIEWNUM, null, null);
         prevFrame = new HashSet<>();
         currFrame = new HashSet<>();
-
     }
 
     /* -------------------------------------------------------------------------
@@ -46,26 +46,28 @@ class ViewServer extends Node {
        -----------------------------------------------------------------------*/
     private void handlePing(Ping m, Address sender) {
         this.currFrame.add(sender);
+        //if we don't have a primary, and are starting up
         if(this.view.primary() == null && this.view.viewNum() == STARTUP_VIEWNUM) {
-            this.view = new View(INITIAL_VIEWNUM, sender, null);
+            this.view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
             acknowledge = false;
         }
         if(Objects.equals(sender, this.view.primary()) && m.viewNum() == this.view.viewNum()) {
             acknowledge = true;
         }
-        if(acknowledge) {
-            if(this.view.backup() == null) {
-                if(!Objects.equals(sender, this.view.primary())) {
-                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), sender);
-                    acknowledge = false;
-                } else if(getRealExtra(sender) != null) {
-                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), getRealExtra(sender));
-                    acknowledge = false;
+        if(acknowledge) {//if primary is on the same view as viewserver
+            if(this.view.backup() == null) {//if current view does not have a backup
+                if(!Objects.equals(sender, this.view.primary())) {//if the sender is not the primary - so sender is idle
+                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), sender);//set sender to be the backup
+                    acknowledge = false;//primary hasnt acknowledged this view
+                } else if(getRealExtra(sender) != null) {//if there is an idle server, and the sender is the primary
+                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), getRealExtra(sender));//set idle server to backup
+                    acknowledge = false;//primary hasn't  acknowledged this view yet
                 }
 
             }
         }
         this.send(new ViewReply(this.view), sender);
+
     }
 
     private synchronized void handleGetView(GetView m, Address sender) {
@@ -78,14 +80,16 @@ class ViewServer extends Node {
     private void onPingCheckTimer(PingCheckTimer t) {
         this.prevFrame = (HashSet)this.currFrame.clone();
         this.currFrame = new HashSet<>();
-        if(acknowledge) {
-            if(!isAlive(this.view.primary())) {
-                if(isAlive(this.view.backup())) {
+        if(acknowledge) {//primary server has the same view as viewserver as of last ping check timer
+            if(!isAlive(this.view.primary())) {//if primary is not alive
+                if(isAlive(this.view.backup())) {//if backup is alive
+                    //then get new backup from idle pool, and promote backup to primary
                     this.view = new View(this.view.viewNum() + 1, this.view.backup(), getExtra(this.view.backup(), prevFrame));
                     acknowledge = false;
                 }
             }
-            else if(!isAlive(this.view.backup())) {
+            else if(this.view.backup()!= null && !isAlive(this.view.backup())) {//primary is alive, but backup is not
+                //get new backup from idle
                 this.view = new View(this.view.viewNum() + 1, this.view.primary(), getExtra(this.view.primary(), prevFrame));
             }
         }
@@ -97,7 +101,7 @@ class ViewServer extends Node {
        -----------------------------------------------------------------------*/
     // Your code here...
     private boolean isAlive(Address address) {
-        if(address == null || currFrame.contains(address) || prevFrame.contains(address)) {
+        if(currFrame.contains(address) || prevFrame.contains(address)) {
             return true;
         }
         return false;
