@@ -195,8 +195,8 @@ class PBServer extends Node {
     private void handleAppReply(AppReply appReply, Address sender) {
         if(!latestApp && appReply != null && Objects.equals(sender, this.view.primary())) {
             this.app = appReply.app();
-            this.recentReply = appReply.recentReply();
-            this.recentRequest = appReply.recentRequest();
+            //this.recentReply = appReply.recentReply();
+            //this.recentRequest = appReply.recentRequest();
             latestApp = true;
         }
     }
@@ -244,7 +244,7 @@ class PBServer extends Node {
        -----------------------------------------------------------------------*/
     // backup request may need to be reissued - do not reset timer if we already have the app reply from primary
     private void onBackupAppRequestTimer(BackupAppRequestTimer t) {
-        if(isBackup() && !latestApp) {
+        if(isBackup && !latestApp) {
             this.send(new AppRequest(), this.view.primary());
             this.set(t, BackupAppRequestTimer.APP_REQUEST_RETRY_MILLIS);
         }
