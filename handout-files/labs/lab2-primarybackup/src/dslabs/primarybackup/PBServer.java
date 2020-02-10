@@ -115,9 +115,9 @@ class PBServer extends Node {
             throws InterruptedException {
         if (isPrimary) {
             if (hasBackup()) {
-                Request forward_request = new ForwardRequest(m, sender);
+                Message forward_request = new ForwardRequest(m, sender);
                 this.send(forward_request, this.view.backup());
-                this.set(new ForwardRequestTimer(command, request_number),100);
+                this.set(new ForwardRequestTimer(m,100);
                 while (this.recentReply == null) {
                     wait();
                 }
