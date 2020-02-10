@@ -187,10 +187,10 @@ class PBServer extends Node {
 
     private synchronized void handleBackupReply(BackupReply m, Address sender) {
 
-            notify();
+        notify();
 
 
-        }
+
     }
 
     //this server is backup, and is getting the most recent application from the new primary
