@@ -4,8 +4,8 @@ import dslabs.framework.Message;
 import dslabs.primarybackup.AMOApplication;
 import dslabs.primarybackup.AMOCommand;
 import dslabs.primarybackup.AMOResult;
-import lombok.Data;
 import dslabs.framework.Address;
+import lombok.Data;
 
 /* -------------------------------------------------------------------------
     ViewServer Messages
@@ -44,15 +44,14 @@ class Reply implements Message {
 @Data
 class ForwardRequest implements Message {
     private final Request request;
-    //private final int ID;
+    private final int ID;
     private final Address client;
 }
 
 @Data
 class BackupReply implements Message {
-    private final AMOResult amoResult;
- //   private final Request request;
-    //private final int ID;
+    private final Reply reply;
+    private final int ID;
     private final Address client;
 }
 
@@ -64,7 +63,6 @@ class AppRequest implements Message {
 @Data
 class AppReply implements Message {
     private final AMOApplication app;
-    private final Request recentRequest;
-    private final Reply recentReply;
+    private final int mostRecentlyExecutedRequest;
 }
 // Your code here...

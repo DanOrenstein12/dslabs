@@ -3,12 +3,12 @@ package dslabs.primarybackup;
 import dslabs.framework.Application;
 import dslabs.framework.Command;
 import dslabs.framework.Result;
-import java.util.HashMap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import dslabs.kvstore.*;
 
 @EqualsAndHashCode
 @ToString
@@ -18,8 +18,7 @@ public final class AMOApplication<T extends Application>
     @Getter @NonNull private final T application;
 
     // Your code here...
-    private HashMap<Integer,AMOResult>
-            clients = new HashMap<Integer,AMOResult>(2^10);
+    private java.util.HashMap<Integer,AMOResult> clients = new java.util.HashMap<Integer,AMOResult>(2^10);
 
     @Override
     public AMOResult execute(Command command) {
@@ -55,6 +54,7 @@ public final class AMOApplication<T extends Application>
     }
 
     public boolean alreadyExecuted(AMOCommand amoCommand) {
+        // Your code here...
         int id = amoCommand.clientID();
         if (clients.containsKey(id) ){
             int seqNum = clients.get(id).sequenceNum();
@@ -65,14 +65,14 @@ public final class AMOApplication<T extends Application>
         return false;
     }
 
-    public void setHashMap(HashMap<Integer,AMOResult> map) {
-        this.clients = (HashMap<Integer, AMOResult>) map.clone();
+    private void setHashMap(java.util.HashMap<Integer,AMOResult> map) {
+        this.clients = (java.util.HashMap<Integer,AMOResult>) map.clone();
     }
 
     @Override
     public AMOApplication clone() {
-        AMOApplication cloneObj = new AMOApplication(this.application);
-        cloneObj.setHashMap(this.clients);
-        return cloneObj;
+        AMOApplication clone = new AMOApplication(this.application);
+        clone.setHashMap(this.clients);
+        return clone;
     }
 }
