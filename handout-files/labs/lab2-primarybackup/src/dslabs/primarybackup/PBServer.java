@@ -51,71 +51,81 @@ class PBServer extends Node {
        -----------------------------------------------------------------------*/
 
 
+//    private synchronized void handleRequest(Request m, Address sender)
+//            throws InterruptedException {
+//        if (isPrimary) {
+//            if (hasBackup()) {
+//                if (hasRequest()) {
+//                    if (hasReply()) {
+//                        if (hasCurrentReply()) {
+//                            if (m.globRequestID() ==
+//                                    recentRequest.globRequestID() + 1) {
+//                                //we are getting the next command in sequence
+//                                //set recent request, forward request on to backup and execute
+//                                recentRequest = m;
+//                                recentReply = null;
+//                                this.send(new ForwardRequest(m,sender),this.view.backup());
+//                                this.app.execute(m.amoCommand());
+//                            } else if (m.globRequestID() ==
+//                                    recentRequest.globRequestID()) {
+//                                //has a reply, and the incoming request has already been executed by both primary and backup
+//                                this.send(recentReply,sender);
+//                            }
+//                            else if (m.globRequestID() < recentRequest.globRequestID()){
+//                                //reply is old, and has been executed by both priamry and backup
+//                                this.send(new Reply(this.app.execute(m.amoCommand()),m.globRequestID()),sender);
+//                            }
+//                            //if request is a future request, don't process it
+//                        } else if (m.globRequestID() == recentReply.globRequestID()) {
+//                            //dont have the current reply, but do have the reply to the message, so send it back
+//                            this.send(recentReply,sender);
+//                        } else if (m.globRequestID() < recentReply.globRequestID()) {
+//                            //dont have current reply, and the incoming request has already been executed by both primary and backup
+//                            this.send(new Reply(this.app.execute(m.amoCommand()),m.globRequestID()),sender);
+//                        }
+//                    }
+//                    else {
+//                        //we have a backup and request, and we don't have a reply
+//                        if (m.globRequestID() == recentRequest.globRequestID()) {
+//                            //if we are getting a repeat of the request, resend the command to the backup
+//                            this.send(new ForwardRequest(m,sender),this.view.backup());
+//                        }
+//                    }
+//                } else {
+//                    //if we have a backup but dont have a request, then we havent sent any commands
+//                    this.recentRequest = m;
+//                    this.send(new ForwardRequest(m,sender),this.view.backup());
+//                    this.app.execute(m.amoCommand());
+//                }
+//            }
+//            else {
+//                //if we dont have a backup, act as sole server
+//                if (hasRequest() && m.globRequestID() == recentRequest.globRequestID()+1) {
+//                    recentRequest = m;
+//                }
+//                this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
+//                this.send(recentReply,sender);
+//            }
+//        }
+//
+//    }
+
     private synchronized void handleRequest(Request m, Address sender)
             throws InterruptedException {
         if (isPrimary) {
-            if (hasBackup()) {
-                if (hasRequest()) {
-                    if (hasReply()) {
-                        if (hasCurrentReply()) {
-                            if (m.globRequestID() ==
-                                    recentRequest.globRequestID() + 1) {
-                                //we are getting the next command in sequence
-                                //set recent request, forward request on to backup and execute
-                                recentRequest = m;
-                                recentReply = null;
-                                this.send(new ForwardRequest(m,sender),this.view.backup());
-                                this.app.execute(m.amoCommand());
-                            } else if (m.globRequestID() ==
-                                    recentRequest.globRequestID()) {
-                                //has a reply, and the incoming request has already been executed by both primary and backup
-                                this.send(recentReply,sender);
-                            }
-                            else if (m.globRequestID() < recentRequest.globRequestID()){
-                                //reply is old, and has been executed by both priamry and backup
-                                this.send(new Reply(this.app.execute(m.amoCommand()),m.globRequestID()),sender);
-                            }
-                            //if request is a future request, don't process it
-                        } else if (m.globRequestID() == recentReply.globRequestID()) {
-                            //dont have the current reply, but do have the reply to the message, so send it back
-                            this.send(recentReply,sender);
-                        } else if (m.globRequestID() < recentReply.globRequestID()) {
-                            //dont have current reply, and the incoming request has already been executed by both primary and backup
-                            this.send(new Reply(this.app.execute(m.amoCommand()),m.globRequestID()),sender);
-                        }
-                    }
-                    else {
-                        //we have a backup and request, and we don't have a reply
-                        if (m.globRequestID() == recentRequest.globRequestID()) {
-                            //if we are getting a repeat of the request, resend the command to the backup
-                            this.send(new ForwardRequest(m,sender),this.view.backup());
-                        }
-                    }
-                } else {
-                    //if we have a backup but dont have a request, then we havent sent any commands
-                    this.recentRequest = m;
-                    this.send(new ForwardRequest(m,sender),this.view.backup());
-                    this.app.execute(m.amoCommand());
+            if (hasBackup) {
+                Request forward_request = new ForwardRequest(m, sender);
+                this.send(forward_request, this.view.backup());
+                this.set(new ForwardRequestTimer(command, request_number),100);
+                while (this.recentReply == null) {
+                    wait();
                 }
             }
-            else {
-                //if we dont have a backup, act as sole server
-                if (hasRequest() && m.globRequestID() == recentRequest.globRequestID()+1) {
-                    recentRequest = m;
-                }
-                this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
-                this.send(recentReply,sender);
-            }
+            this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
+            this.send(recentReply,sender);
+            recentReply == null;
         }
-
     }
-
-//    private synchronized void handleRequest(Request m, Address sender)
-//            throws InterruptedException {
-//
-//
-//
-//    }
 
 
     private synchronized void handleViewReply(ViewReply m, Address sender) {
@@ -202,7 +212,7 @@ class PBServer extends Node {
         this.recentRequest = null;
     }
 
-    private boolean hasBackup() {
+    private boolean hasBackup {
         return (view != null && view.backup() != null);
     }
 
@@ -239,11 +249,11 @@ class PBServer extends Node {
         this.set(t, PingTimer.PING_MILLIS);
     }
 
-//    private void onForwardRequestTimer(ForwardRequestTimer t) {
-//        if (!hasBackupReply()) {
-//            this.send(t.request(),this.view.backup());
-//            this.set(t, t.FORWARD_RETRY_MILLIS);
-//        }
-//    }
+    private void onForwardRequestTimer(ForwardRequestTimer t) {
+        if (recentReply == null) {
+            this.send(t.request(),this.view.backup());
+            this.set(t, t.FORWARD_RETRY_MILLIS);
+        }
+    }
 
 }
