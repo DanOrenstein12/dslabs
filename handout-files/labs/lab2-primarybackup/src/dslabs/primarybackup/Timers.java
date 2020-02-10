@@ -30,7 +30,7 @@ final class ViewServerTimer implements Timer {
 
 @Data
 final class BackupAppRequestTimer implements Timer {
-    static final int APP_REQUEST_RETRY_MILLIS = 25;
+    static final int APP_REQUEST_RETRY_MILLIS = 100;
     final AMOApplication app;
 }
 
