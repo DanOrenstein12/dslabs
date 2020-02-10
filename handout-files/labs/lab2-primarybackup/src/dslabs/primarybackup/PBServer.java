@@ -124,7 +124,6 @@ class PBServer extends Node {
             this.recentReply = new Reply(this.app.execute(m.amoCommand()),m.globRequestID());
             this.send(recentReply,sender);
             recentReply = null;
-        }
     }
 
     //Waiting could be wrong. Instead it may be right to just have recalling shit in the timer. I think thats similar to what David did
