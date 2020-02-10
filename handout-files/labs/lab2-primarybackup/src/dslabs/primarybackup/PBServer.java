@@ -346,8 +346,8 @@ class PBServer extends Node {
     //note we do not need a timer for this
     private void handleAppRequest(AppRequest m, Address sender) {
         if(this.view.backup() != null && this.app != null && Objects.equals(sender, this.view.backup())) {
-            AMOApplication temp = this.app.clone();
-            this.send(new AppReply(temp,this.recentlyHandledForward), sender);
+            //AMOApplication temp = this.app.clone();
+            this.send(new AppReply(this.application(), this.recentlyHandledForward), sender);
         }
     }
 
