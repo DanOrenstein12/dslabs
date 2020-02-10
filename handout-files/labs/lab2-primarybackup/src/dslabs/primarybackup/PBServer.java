@@ -24,6 +24,7 @@ class PBServer extends Node {
     private boolean isBackup = false;
     private boolean latestApp = false;
 
+
     private Request recentRequest;
     private Reply recentReply;
 
@@ -113,7 +114,7 @@ class PBServer extends Node {
     private synchronized void handleRequest(Request m, Address sender)
             throws InterruptedException {
         if (isPrimary) {
-            if (hasBackup) {
+            if (hasBackup()) {
                 Request forward_request = new ForwardRequest(m, sender);
                 this.send(forward_request, this.view.backup());
                 this.set(new ForwardRequestTimer(command, request_number),100);
@@ -212,7 +213,7 @@ class PBServer extends Node {
         this.recentRequest = null;
     }
 
-    private boolean hasBackup {
+    private boolean hasBackup() {
         return (view != null && view.backup() != null);
     }
 
