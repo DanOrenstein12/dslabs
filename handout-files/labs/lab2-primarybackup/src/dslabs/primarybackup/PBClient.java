@@ -103,7 +103,7 @@ class PBClient extends Node implements Client {
 
             isViewCurrent = false;
             this.send(new GetView(), this.viewServer);
-            }
+
             if (isViewCurrent && this.view.primary() != null) {
                 this.send(t.request(), this.view.primary());
             }
@@ -111,7 +111,7 @@ class PBClient extends Node implements Client {
                 this.send(new GetView(), this.viewServer);
             }
             this.set(t, t.CLIENT_RETRY_MILLIS);
-        }
+
     }
 
 //    private void onViewServerTimer(ViewServerTimer t) {
