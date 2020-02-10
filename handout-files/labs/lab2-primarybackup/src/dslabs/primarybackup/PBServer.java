@@ -244,7 +244,7 @@ class PBServer extends Node {
        -----------------------------------------------------------------------*/
     // backup request may need to be reissued - do not reset timer if we already have the app reply from primary
     private void onBackupAppRequestTimer(BackupAppRequestTimer t) {
-        if(isBackup && !latestApp) {
+        if(isBackup() && !latestApp) {
             this.send(new AppRequest(), this.view.primary());
             this.set(t, BackupAppRequestTimer.APP_REQUEST_RETRY_MILLIS);
         }
