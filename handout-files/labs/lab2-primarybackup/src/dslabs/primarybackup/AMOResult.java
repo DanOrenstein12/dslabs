@@ -10,4 +10,33 @@ public final class AMOResult implements Result {
     private final int sequenceNum;
     private final int clientID;
 
+//    public AMOResult(Result r, int s, int c) {
+//        setClientID(c);
+//        setResult(r);
+//        setSequenceNum(s);
+//    }
+//
+//    public Result getResult() {
+//        return result;
+//    }
+//
+//    public void setResult(Result result) {
+//        this.result = result;
+//    }
+//
+//    public void setSequenceNum(int sequenceNum) {
+//        this.sequenceNum = sequenceNum;
+//    }
+//
+//    public int getSequenceNum() {
+//        return sequenceNum;
+//    }
+//
+//    public void setClientID(int clientID) {
+//        this.clientID = clientID;
+//    }
+//
+//    public int getClientID() {
+//        return clientID;
+//    }
 }

@@ -26,7 +26,7 @@ class PBClient extends Node implements Client {
 
     private View view;
     private boolean isViewCurrent;
-//    private int numRetries;
+    private int numRetries;
 
     private static int globalRequestID = 0;
 
@@ -44,7 +44,7 @@ class PBClient extends Node implements Client {
         isViewCurrent = false;
 //        this.set(new ViewServerTimer(), VIEW_SERVER_REGET_MILLIS);
         this.send(new GetView(), this.viewServer);
-//        numRetries = 0;
+        numRetries = 0;
         result = new AMOResult(null,this.MaxjobID,this.clientID);
     }
 
@@ -55,7 +55,7 @@ class PBClient extends Node implements Client {
 
     @Override
     public void sendCommand(Command command) {
-//        numRetries = 0;
+        numRetries = 0;
         this.MaxjobID += 1;
         this.command = new AMOCommand(command, this.MaxjobID, this.clientID);
         Request req = new Request(this.command,++globalRequestID);
@@ -91,7 +91,7 @@ class PBClient extends Node implements Client {
     private synchronized void handleViewReply(ViewReply m, Address sender) {
         this.view = m.view();
         isViewCurrent = true;
-        //numRetries = 0;
+        numRetries = 0;
     }
 
     /* -------------------------------------------------------------------------
@@ -99,19 +99,20 @@ class PBClient extends Node implements Client {
        -----------------------------------------------------------------------*/
     private synchronized void onClientTimer(ClientTimer t) {
         if (result.sequenceNum() < t.request().amoCommand().sequenceNum()) {
-
-
-
-
-            if (this.view.primary() != null) {
+            numRetries++;
+            if (numRetries > 5) {
+                isViewCurrent = false;
+                numRetries = 0;
+                this.send(new GetView(), this.viewServer);
+            }
+            if (isViewCurrent && this.view.primary() != null) {
                 this.send(t.request(), this.view.primary());
-
+            }
+            else {
+                this.send(new GetView(), this.viewServer);
             }
             this.set(t, t.CLIENT_RETRY_MILLIS);
-            this.send(new GetView(), this.viewServer);
-
         }
-
     }
 
 //    private void onViewServerTimer(ViewServerTimer t) {
