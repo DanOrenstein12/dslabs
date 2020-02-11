@@ -295,26 +295,28 @@ class PBServer extends Node {
         // Your code here...
         //we have cases on whether is primary or is backup or is neither
         View oldview = this.view;
-        this.view = m.view();
-        if(!isPrimary && !isBackup) {//is idle
-            if(Objects.equals(m.view().primary(), this.address())) {//idle -> primary
-                this.isPrimary = true;
+        if (this.view.viewNum() <= m.view().viewNum()) {
+            this.view = m.view();
+            if(!isPrimary && !isBackup) {//is idle
+                if(Objects.equals(m.view().primary(), this.address())) {//idle -> primary
+                    this.isPrimary = true;
+                    this.isBackup = false;
+                } else if(Objects.equals(m.view().backup(), this.address())) { // idle -> backup
+                    this.isPrimary = false;
+                    this.isBackup = true;
+                    // Become new backup, I need the app from the primary to be synchronized
+                    this.send(new AppRequest(), this.view.primary());
+                    // if not receive the app, send again
+                    this.set(new BackupAppRequestTimer(this.app), BackupAppRequestTimer.APP_REQUEST_RETRY_MILLIS);
+                }
+            } else if(isBackup && Objects.equals(m.view().primary(), this.address())) {// backup -> primary
                 this.isBackup = false;
-            } else if(Objects.equals(m.view().backup(), this.address())) { // idle -> backup
+                this.isPrimary = true;
+            } else if(isPrimary && !Objects.equals(m.view().primary(), this.address())) {// primary -> idle
                 this.isPrimary = false;
-                this.isBackup = true;
-                // Become new backup, I need the app from the primary to be synchronized
-                this.send(new AppRequest(), this.view.primary());
-                // if not receive the app, send again
-                this.set(new BackupAppRequestTimer(this.app), BackupAppRequestTimer.APP_REQUEST_RETRY_MILLIS);
+                this.isBackup = false;
+                this.reset();
             }
-        } else if(isBackup && Objects.equals(m.view().primary(), this.address())) {// backup -> primary
-            this.isBackup = false;
-            this.isPrimary = true;
-        } else if(isPrimary && !Objects.equals(m.view().primary(), this.address())) {// primary -> idle
-            this.isPrimary = false;
-            this.isBackup = false;
-            this.reset();
         }
 //        else if(isPrimary && !Objects.equals(this.view.backup(), m.view().backup())) {// primary waits to acknowledge new view until backup finishes updating
 //            this.view = oldview;
