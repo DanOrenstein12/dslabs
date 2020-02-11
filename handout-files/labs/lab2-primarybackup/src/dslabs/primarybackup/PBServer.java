@@ -268,7 +268,7 @@ class PBServer extends Node {
         // primary just forwards request onto backup if it exists, or acts as single server if not
         if (latestApp) {
             if (isPrimary) {
-                if (!this.app.alreadyExecuted(m.amocommand())) {
+                if (!this.app.alreadyExecuted(m.amoCommand())) {
                     this.requests_recieved += 1;
                     if (hasBackup()) {
 
@@ -315,13 +315,14 @@ class PBServer extends Node {
             this.isPrimary = false;
             this.isBackup = false;
             this.reset();
-        } else if(isPrimary && !Objects.equals(this.view.backup(), m.view().backup())) {// primary waits to acknowledge new view until backup finishes updating
-            this.view = oldview;
-            if (m.view().backup().latestApp) {
-                this.view = m.view();
-            }
-
         }
+//        else if(isPrimary && !Objects.equals(this.view.backup(), m.view().backup())) {// primary waits to acknowledge new view until backup finishes updating
+//            this.view = oldview;
+//            if (m.view().backup().latestApp) {
+//                this.view = m.view();
+//            }
+
+
     }
 
     // Your code here...
