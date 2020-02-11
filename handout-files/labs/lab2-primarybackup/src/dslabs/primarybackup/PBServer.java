@@ -224,6 +224,7 @@ class PBServer extends Node {
     private boolean isPrimary;
     private boolean isBackup;
     public boolean latestApp;
+    public boolean backupready;
 
     private java.util.HashMap<Integer,ForwardRequest> outstandingRequests;
 
@@ -231,6 +232,7 @@ class PBServer extends Node {
 
     private int recentlyHandledForward;
     private int forwardedID;
+    private int requests_recieved;
 
     private ForwardRequest recentForwarded;
 
@@ -256,6 +258,7 @@ class PBServer extends Node {
         this.forwardedID = 0;
         this.recentlyHandledForward = 0;
         outstandingRequests = new java.util.HashMap<>();
+        this.requests_recieved = 0;
     }
 
     /* -------------------------------------------------------------------------
@@ -265,20 +268,25 @@ class PBServer extends Node {
         // primary just forwards request onto backup if it exists, or acts as single server if not
         if (latestApp) {
             if (isPrimary) {
-                if (hasBackup()) {
-                    if (outstandingRequests.containsKey(m.globRequestID())) {
-                        this.send(outstandingRequests.get(m.globRequestID()), this.view.backup());
+                if (!this.app.alreadyExecuted(m.amocommand())) {
+                    this.requests_recieved += 1;
+                    if (hasBackup()) {
+
+                        if (outstandingRequests.containsKey(requests_recieved)) {
+                            this.send(outstandingRequests.get(requests_recieved), this.view.backup());
+                        } else {
+                            ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
+                            this.send(f, this.view.backup());
+                            this.app.execute(m.amoCommand());
+                            this.outstandingRequests.put(requests_recieved, f);
+                            this.recentlyHandledForward = requests_recieved;
+                        }
                     } else {
-                        ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
-                        this.send(f, this.view.backup());
-                        this.app.execute(m.amoCommand());
-                        this.outstandingRequests.put(m.globRequestID(), f);
-                        this.recentlyHandledForward = m.globRequestID();
+                        Reply toRep = new Reply(this.app.execute(m.amoCommand()), m.globRequestID());
+                        this.send(toRep, sender);
                     }
-                } else {
-                    Reply toRep = new Reply(this.app.execute(m.amoCommand()), m.globRequestID());
-                    this.send(toRep, sender);
                 }
+
             }
         }
     }
