@@ -276,7 +276,7 @@ class PBServer extends Node {
                     if (outstandingRequests.containsKey(requests_recieved)) {
                         this.send(outstandingRequests.get(requests_recieved), this.view.backup());
                     } else {
-                        ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
+                        ForwardRequest f = new ForwardRequest(m, forwardedID, sender);
                         this.send(f, this.view.backup());
                         this.app.execute(m.amoCommand());
                         this.outstandingRequests.put(requests_recieved, f);
