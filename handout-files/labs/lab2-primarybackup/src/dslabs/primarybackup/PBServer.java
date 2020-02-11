@@ -270,21 +270,21 @@ class PBServer extends Node {
             if (isPrimary) {
                 if (!this.app.alreadyExecuted(m.amoCommand())) {
                     this.requests_recieved += 1;
-                    if (hasBackup()) {
+                }
+                if (hasBackup()) {
 
-                        if (outstandingRequests.containsKey(requests_recieved)) {
-                            this.send(outstandingRequests.get(requests_recieved), this.view.backup());
-                        } else {
-                            ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
-                            this.send(f, this.view.backup());
-                            this.app.execute(m.amoCommand());
-                            this.outstandingRequests.put(requests_recieved, f);
-                            this.recentlyHandledForward = requests_recieved;
-                        }
+                    if (outstandingRequests.containsKey(requests_recieved)) {
+                        this.send(outstandingRequests.get(requests_recieved), this.view.backup());
                     } else {
-                        Reply toRep = new Reply(this.app.execute(m.amoCommand()), m.globRequestID());
-                        this.send(toRep, sender);
+                        ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
+                        this.send(f, this.view.backup());
+                        this.app.execute(m.amoCommand());
+                        this.outstandingRequests.put(requests_recieved, f);
+                        this.recentlyHandledForward = requests_recieved;
                     }
+                } else {
+                    Reply toRep = new Reply(this.app.execute(m.amoCommand()), m.globRequestID());
+                    this.send(toRep, sender);
                 }
 
             }
