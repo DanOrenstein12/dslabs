@@ -24,7 +24,6 @@ class ViewServer extends Node {
 
     static final int STARTER = 0;
     public static int globalID = STARTER;
-    private View view;
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
