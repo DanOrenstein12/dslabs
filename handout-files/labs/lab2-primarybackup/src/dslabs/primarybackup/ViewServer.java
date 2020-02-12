@@ -45,7 +45,7 @@ class ViewServer extends Node {
 
     /* -------------------------------------------------------------------------
         Message Handlers
-       -----------------------------------------------------------------------*/
+       ----------------------------------------------------------------------- reverting*/
     private void handlePing(Ping m, Address sender) {
         this.currFrame.add(sender);
         //if we don't have a primary, and are starting up
