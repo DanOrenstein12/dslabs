@@ -287,7 +287,7 @@ class PBServer extends Node {
         // Your code here...
         //we have cases on whether is primary or is backup or is neither
 
-        if (this.view.ViewNum() <= m.View.ViewNum()){
+        if (this.view.ViewNum() <= m.view.ViewNum()){
             this.view = m.view();
             if(!isPrimary && !isBackup) {//is idle
                 if(Objects.equals(m.view().primary(), this.address())) {//idle -> primary
