@@ -51,6 +51,8 @@ class ViewServer extends Node {
         //if we don't have a primary, and are starting up
         if(this.view.primary() == null && this.view.viewNum() == STARTUP_VIEWNUM) {
             this.new_view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
+            this.view = this.new_view;
+
             acknowledge = false;
         }
         if(Objects.equals(sender, this.new_view.primary()) && m.viewNum() == this.new_view.viewNum()) {
@@ -79,7 +81,7 @@ class ViewServer extends Node {
     private synchronized void handleGetView(GetView m, Address sender) {
 
 
-        if (this.view.viewNum() == 1) {
+        if (this.view.viewNum() == STARTUP_VIEWNUM) {
             this.send(new ViewReply(this.view), sender);
 
         }
