@@ -857,14 +857,14 @@ public class PrimaryBackupTest extends BaseJUnitTest {
                         client(1));
 
         // Have the client commit the operation to only the primary
-        searchSettings.maxTimeSecs(100).partition(server(1), client(1), vsa)
+        searchSettings.maxTimeSecs(10).partition(server(1), client(1), vsa)
                       .addInvariant(clientDone(client(1)).negate());
         SearchResults results = Search.bfs(primaryAlone, searchSettings);
         assertEndCondition(INVARIANT_VIOLATED, results);
         SearchState client1Done = results.invariantViolatingState();
 
         // Make sure that the second client can finish, sending message to backup
-        searchSettings.maxTimeSecs(300).resetNetwork().clearInvariants()
+        searchSettings.maxTimeSecs(30).resetNetwork().clearInvariants()
                       .partition(server(1), server(2), client(2), vsa)
                       .linkActive(server(1), client(2), false)
                       .linkActive(client(2), server(1), false)
