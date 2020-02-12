@@ -6,6 +6,7 @@ import dslabs.framework.Result;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.HashMap;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -65,7 +66,7 @@ public class KVStore implements Application {
         @NonNull private final String value;
     }
 
-    Map<String, String> kv = new Hashtable();
+    Map<String, String> kv = new HashMap();
 
     @Override
     public KVStoreResult execute(Command command) {
