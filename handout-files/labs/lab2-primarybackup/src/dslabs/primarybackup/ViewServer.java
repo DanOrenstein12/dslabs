@@ -24,7 +24,7 @@ class ViewServer extends Node {
 
     static final int STARTER = 0;
     public static int globalID = STARTER;
-    private View new_view;
+    private View view;
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
@@ -38,7 +38,6 @@ class ViewServer extends Node {
         set(new PingCheckTimer(), PING_CHECK_MILLIS);
         // Your code here...
         this.view = new View(STARTUP_VIEWNUM, null, null);
-        this. new_view = this.view;
         prevFrame = new HashSet<>();
         currFrame = new HashSet<>();
     }
@@ -50,46 +49,34 @@ class ViewServer extends Node {
         this.currFrame.add(sender);
         //if we don't have a primary, and are starting up
         if(this.view.primary() == null && this.view.viewNum() == STARTUP_VIEWNUM) {
-            this.new_view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
-            this.view = this.new_view;
-
+            this.view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
             acknowledge = false;
         }
-        if(Objects.equals(sender, this.new_view.primary()) && m.viewNum() == this.new_view.viewNum()) {
+        if(Objects.equals(sender, this.view.primary()) && m.viewNum() == this.view.viewNum()) {
             acknowledge = true;
-            this.view = this.new_view;
+            this.view = this.view;
         }
         if(acknowledge) {//if primary is on the same view as viewserver
             if(this.view.backup() == null) {//if current view does not have a backup
                 if(!Objects.equals(sender, this.view.primary())) {//if the sender is not the primary - so sender is idle
-                    this.new_view = new View(this.view.viewNum() + 1, this.view.primary(), sender);//set sender to be the backup
+                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), sender);//set sender to be the backup
                     acknowledge = false;//primary hasnt acknowledged this view
                 } else if(getRealExtra(sender) != null) {//if there is an idle server, and the sender is the primary
-                    this.new_view = new View(this.view.viewNum() + 1, this.view.primary(), getRealExtra(sender));//set idle server to backup
+                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), getRealExtra(sender));//set idle server to backup
                     acknowledge = false;//primary hasn't  acknowledged this view yet
                 }
 
             }
-
+            this.send(new ViewReply(this.view), sender);
         }
-        this.send(new ViewReply(this.view), sender);
 
 
 
     }
 
     private synchronized void handleGetView(GetView m, Address sender) {
-
-
-        if (this.view.viewNum() == STARTUP_VIEWNUM) {
+        if (Objects.equals(this.view.primary(), sender)) {
             this.send(new ViewReply(this.view), sender);
-
-        }
-        else if (Objects.equals(this.new_view.primary(), sender)) {
-            this.send(new ViewReply(this.new_view), sender);
-
-
-
         } else {
             this.send(new ViewReply(this.view), sender);
         }
@@ -105,13 +92,13 @@ class ViewServer extends Node {
             if(!isAlive(this.view.primary())) {//if primary is not alive
                 if(isAlive(this.view.backup())) {//if backup is alive
                     //then get new backup from idle pool, and promote backup to primary
-                    this.new_view = new View(this.view.viewNum() + 1, this.view.backup(), getExtra(this.view.backup(), prevFrame));
+                    this.view = new View(this.view.viewNum() + 1, this.view.backup(), getExtra(this.view.backup(), prevFrame));
                     acknowledge = false;
                 }
             }
             else if(this.view.backup()!= null && !isAlive(this.view.backup())) {//primary is alive, but backup is not
                 //get new backup from idle
-                this.new_view = new View(this.view.viewNum() + 1, this.view.primary(), getExtra(this.view.primary(), prevFrame));
+                this.view = new View(this.view.viewNum() + 1, this.view.primary(), getExtra(this.view.primary(), prevFrame));
             }
         }
         set(t, PING_CHECK_MILLIS);
