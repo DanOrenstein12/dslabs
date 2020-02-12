@@ -52,23 +52,26 @@ class ViewServer extends Node {
             this.new_view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
             acknowledge = false;
         }
-        if(Objects.equals(sender, this.view.primary()) && m.viewNum() == this.view.viewNum()) {
+        if(Objects.equals(sender, this.new_view.primary()) && m.viewNum() == this.new_view.viewNum()) {
             acknowledge = true;
             this.view = this.new_view;
         }
         if(acknowledge) {//if primary is on the same view as viewserver
             if(this.view.backup() == null) {//if current view does not have a backup
                 if(!Objects.equals(sender, this.view.primary())) {//if the sender is not the primary - so sender is idle
-                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), sender);//set sender to be the backup
+                    this.new_view = new View(this.view.viewNum() + 1, this.view.primary(), sender);//set sender to be the backup
                     acknowledge = false;//primary hasnt acknowledged this view
                 } else if(getRealExtra(sender) != null) {//if there is an idle server, and the sender is the primary
-                    this.view = new View(this.view.viewNum() + 1, this.view.primary(), getRealExtra(sender));//set idle server to backup
+                    this.new_view = new View(this.view.viewNum() + 1, this.view.primary(), getRealExtra(sender));//set idle server to backup
                     acknowledge = false;//primary hasn't  acknowledged this view yet
                 }
 
             }
+
         }
         this.send(new ViewReply(this.view), sender);
+
+
 
     }
 
