@@ -49,7 +49,7 @@ class ViewServer extends Node {
         this.currFrame.add(sender);
         //if we don't have a primary, and are starting up
         if(this.view.primary() == null && this.view.viewNum() == STARTUP_VIEWNUM) {
-            this.view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
+            this.new_view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
             acknowledge = false;
         }
         if(Objects.equals(sender, this.view.primary()) && m.viewNum() == this.view.viewNum()) {
