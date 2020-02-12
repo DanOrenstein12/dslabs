@@ -38,6 +38,7 @@ class ViewServer extends Node {
         set(new PingCheckTimer(), PING_CHECK_MILLIS);
         // Your code here...
         this.view = new View(STARTUP_VIEWNUM, null, null);
+        this. new_view = this.view;
         prevFrame = new HashSet<>();
         currFrame = new HashSet<>();
     }
@@ -76,8 +77,17 @@ class ViewServer extends Node {
     }
 
     private synchronized void handleGetView(GetView m, Address sender) {
-        if (Objects.equals(this.new_view.primary(), sender)) {
+
+
+        if (this.view.viewNum() == 1) {
+            this.send(new ViewReply(this.view), sender);
+
+        }
+        else if (Objects.equals(this.new_view.primary(), sender)) {
             this.send(new ViewReply(this.new_view), sender);
+
+
+
         } else {
             this.send(new ViewReply(this.view), sender);
         }
