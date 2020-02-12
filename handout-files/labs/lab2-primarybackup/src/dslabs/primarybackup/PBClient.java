@@ -26,9 +26,9 @@ class PBClient extends Node implements Client {
 
     private View view;
     private boolean isViewCurrent;
-//    private int numRetries;
+    //    private int numRetries;
 
-    private static int client_request_no = 0;
+    private static int globalRequestID = 0;
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
@@ -53,10 +53,10 @@ class PBClient extends Node implements Client {
 
     @Override
     public void sendCommand(Command command) {
-//        numRetries = 0;
+        //        numRetries = 0;
         this.MaxjobID += 1;
         this.command = new AMOCommand(command, this.MaxjobID, this.clientID);
-        Request req = new Request(this.command,++client_request_no);
+        Request req = new Request(this.command,++globalRequestID);
         if (this.view != null && this.view.primary() != null) {
             this.send(req,this.view.primary());
         }
@@ -114,5 +114,3 @@ class PBClient extends Node implements Client {
 
 
 }
-
- //&& this.view.primary() != null
