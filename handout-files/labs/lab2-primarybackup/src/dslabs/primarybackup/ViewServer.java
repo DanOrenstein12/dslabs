@@ -73,7 +73,11 @@ class ViewServer extends Node {
     }
 
     private synchronized void handleGetView(GetView m, Address sender) {
-        this.send(new ViewReply(this.view), sender);
+        if (Objects.equals(this.new_view.primary(), sender)) {
+            this.send(new ViewReply(this.new_view), sender);
+        } else {
+            this.send(new ViewReply(this.view), sender);
+        }
     }
 
     /* -------------------------------------------------------------------------
