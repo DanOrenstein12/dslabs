@@ -80,7 +80,7 @@ class PBClient extends Node implements Client {
         Message Handlers
        -----------------------------------------------------------------------*/
     private synchronized void handleReply(Reply m, Address sender) {
-        if(m.amoResult() != null && m.amoResult().sequenceNum() >= this.MaxjobID) {
+        if(m.amoResult() != null && m.amoResult().sequenceNum() == this.MaxjobID) {
             this.result = m.amoResult();
             this.notify();
         }
