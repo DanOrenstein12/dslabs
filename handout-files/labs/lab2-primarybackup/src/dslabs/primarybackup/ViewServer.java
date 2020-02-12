@@ -43,10 +43,10 @@ class ViewServer extends Node {
 
     /* -------------------------------------------------------------------------
         Message Handlers
-       -----------------------------------------------------------------------*/
+       ----------------------------------------------------------------------- reverting*/
     private void handlePing(Ping m, Address sender) {
         this.currFrame.add(sender);
-        //if we don't have a primary, and are starting up
+        //if we don't have a primary, and are starting up attempting to resolve difference
         if(this.view.primary() == null && this.view.viewNum() == STARTUP_VIEWNUM) {
             this.view = new View(INITIAL_VIEWNUM, sender, null);//set the sender to be the primary
             acknowledge = false;
