@@ -24,6 +24,7 @@ class ViewServer extends Node {
 
     static final int STARTER = 0;
     public static int globalID = STARTER;
+    private View new_view;
 
     /* -------------------------------------------------------------------------
         Construction and Initialization
@@ -53,6 +54,7 @@ class ViewServer extends Node {
         }
         if(Objects.equals(sender, this.view.primary()) && m.viewNum() == this.view.viewNum()) {
             acknowledge = true;
+            this.view = this.new_view;
         }
         if(acknowledge) {//if primary is on the same view as viewserver
             if(this.view.backup() == null) {//if current view does not have a backup
@@ -84,13 +86,13 @@ class ViewServer extends Node {
             if(!isAlive(this.view.primary())) {//if primary is not alive
                 if(isAlive(this.view.backup())) {//if backup is alive
                     //then get new backup from idle pool, and promote backup to primary
-                    this.view = new View(this.view.viewNum() + 1, this.view.backup(), getExtra(this.view.backup(), prevFrame));
+                    this.new_view = new View(this.view.viewNum() + 1, this.view.backup(), getExtra(this.view.backup(), prevFrame));
                     acknowledge = false;
                 }
             }
             else if(this.view.backup()!= null && !isAlive(this.view.backup())) {//primary is alive, but backup is not
                 //get new backup from idle
-                this.view = new View(this.view.viewNum() + 1, this.view.primary(), getExtra(this.view.primary(), prevFrame));
+                this.new_view = new View(this.view.viewNum() + 1, this.view.primary(), getExtra(this.view.primary(), prevFrame));
             }
         }
         set(t, PING_CHECK_MILLIS);
