@@ -223,8 +223,7 @@ class PBServer extends Node {
     private View view;
     private boolean isPrimary;
     private boolean isBackup;
-    public boolean latestApp;
-    public boolean backupready;
+    private boolean latestApp;
 
     private java.util.HashMap<Integer,ForwardRequest> outstandingRequests;
 
@@ -232,7 +231,6 @@ class PBServer extends Node {
 
     private int recentlyHandledForward;
     private int forwardedID;
-    private int requests_recieved;
 
     private ForwardRequest recentForwarded;
 
@@ -249,7 +247,7 @@ class PBServer extends Node {
     public void init() {
         view = new View(ViewServer.STARTUP_VIEWNUM,null,null);
         this.send(new Ping(ViewServer.STARTUP_VIEWNUM),viewServer);
-        //ping = new PingTimer();
+        ping = new PingTimer();
         this.set(ping,ping.PING_MILLIS);
         this.isPrimary = false;
         this.isBackup = false;
@@ -258,7 +256,6 @@ class PBServer extends Node {
         this.forwardedID = 0;
         this.recentlyHandledForward = 0;
         outstandingRequests = new java.util.HashMap<>();
-        this.requests_recieved = 0;
     }
 
     /* -------------------------------------------------------------------------
@@ -268,25 +265,20 @@ class PBServer extends Node {
         // primary just forwards request onto backup if it exists, or acts as single server if not
         if (latestApp) {
             if (isPrimary) {
-                if (!this.app.alreadyExecuted(m.amoCommand())) {
-                    this.requests_recieved += 1;
-                }
                 if (hasBackup()) {
-
-                    if (outstandingRequests.containsKey(requests_recieved)) {
-                        this.send(outstandingRequests.get(requests_recieved), this.view.backup());
+                    if (outstandingRequests.containsKey(m.globRequestID())) {
+                        this.send(outstandingRequests.get(m.globRequestID()), this.view.backup());
                     } else {
-                        ForwardRequest f = new ForwardRequest(m, requests_recieved, sender);
+                        ForwardRequest f = new ForwardRequest(m, ++forwardedID, sender);
                         this.send(f, this.view.backup());
                         this.app.execute(m.amoCommand());
-                        this.outstandingRequests.put(requests_recieved, f);
-                        this.recentlyHandledForward = requests_recieved;
+                        this.outstandingRequests.put(m.globRequestID(), f);
+                        this.recentlyHandledForward = m.globRequestID();
                     }
                 } else {
                     Reply toRep = new Reply(this.app.execute(m.amoCommand()), m.globRequestID());
                     this.send(toRep, sender);
                 }
-
             }
         }
     }
@@ -294,37 +286,27 @@ class PBServer extends Node {
     private void handleViewReply(ViewReply m, Address sender) {
         // Your code here...
         //we have cases on whether is primary or is backup or is neither
-        View oldview = this.view;
-        if (this.view.viewNum() <= m.view().viewNum()) {
-            this.view = m.view();
-            if(!isPrimary && !isBackup) {//is idle
-                if(Objects.equals(m.view().primary(), this.address())) {//idle -> primary
-                    this.isPrimary = true;
-                    this.isBackup = false;
-                } else if(Objects.equals(m.view().backup(), this.address())) { // idle -> backup
-                    this.isPrimary = false;
-                    this.isBackup = true;
-                    // Become new backup, I need the app from the primary to be synchronized
-                    this.send(new AppRequest(), this.view.primary());
-                    // if not receive the app, send again
-                    this.set(new BackupAppRequestTimer(this.app), BackupAppRequestTimer.APP_REQUEST_RETRY_MILLIS);
-                }
-            } else if(isBackup && Objects.equals(m.view().primary(), this.address())) {// backup -> primary
-                this.isBackup = false;
+        this.view = m.view();
+        if(!isPrimary && !isBackup) {//is idle
+            if(Objects.equals(m.view().primary(), this.address())) {//idle -> primary
                 this.isPrimary = true;
-            } else if(isPrimary && !Objects.equals(m.view().primary(), this.address())) {// primary -> idle
-                this.isPrimary = false;
                 this.isBackup = false;
-                this.reset();
+            } else if(Objects.equals(m.view().backup(), this.address())) { // idle -> backup
+                this.isPrimary = false;
+                this.isBackup = true;
+                // Become new backup, I need the app from the primary to be synchronized
+                this.send(new AppRequest(), this.view.primary());
+                // if not receive the app, send again
+                this.set(new BackupAppRequestTimer(this.app), BackupAppRequestTimer.APP_REQUEST_RETRY_MILLIS);
             }
+        } else if(isBackup && Objects.equals(m.view().primary(), this.address())) {// backup -> primary
+            this.isBackup = false;
+            this.isPrimary = true;
+        } else if(isPrimary && !Objects.equals(m.view().primary(), this.address())) {// primary -> idle
+            this.isPrimary = false;
+            this.isBackup = false;
+            this.reset();
         }
-//        else if(isPrimary && !Objects.equals(this.view.backup(), m.view().backup())) {// primary waits to acknowledge new view until backup finishes updating
-//            this.view = oldview;
-//            if (m.view().backup().latestApp) {
-//                this.view = m.view();
-//            }
-
-
     }
 
     // Your code here...
@@ -365,7 +347,7 @@ class PBServer extends Node {
     private void handleAppRequest(AppRequest m, Address sender) {
         if(this.view.backup() != null && this.app != null && Objects.equals(sender, this.view.backup())) {
             //AMOApplication temp = this.app.clone();
-            this.send(new AppReply(this.app, this.requests_recieved), sender);
+            this.send(new AppReply(this.app, this.recentlyHandledForward), sender);
         }
     }
 
@@ -405,4 +387,3 @@ class PBServer extends Node {
         outstandingRequests = new java.util.HashMap<>();
     }
 }
-
